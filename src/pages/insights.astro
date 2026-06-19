@@ -1,0 +1,49 @@
+---
+import Base from '../layouts/Base.astro';
+import PostCard from '../components/PostCard.astro';
+import { caseStudies, articles, links } from '../data/posts';
+import { site } from '../data/site';
+---
+<Base title="Insights" description="Case studies and writing on building AI-native software, spec-driven development, and shipping with coding agents.">
+  <section class="section section--tight">
+    <div class="container">
+      <p class="eyebrow">Insights &amp; work</p>
+      <h1 style="max-width:20ch">Notes from the workbench</h1>
+      <p class="lead">
+        Case studies and articles on how I think about building software and AI — the same thinking I bring to your business.
+      </p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:8px">
+    <div class="container">
+      <h2 style="margin-bottom:24px">Case studies</h2>
+      <div class="grid grid--3">
+        {caseStudies.map((post) => <PostCard post={post} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <h2 style="margin-bottom:24px">Articles</h2>
+      <div class="grid grid--3">
+        {articles.map((post) => <PostCard post={post} />)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <h2 style="margin-bottom:24px">Links</h2>
+      <div class="grid grid--3">
+        {links.map((post) => <PostCard post={post} />)}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .textlink { color: var(--brand); font-weight: 600; }
+  .textlink:hover { text-decoration: underline; }
+</style>

@@ -1,0 +1,180 @@
+---
+import Base from '../layouts/Base.astro';
+import Availability from '../components/Availability.astro';
+import { site } from '../data/site';
+---
+<Base title="Pricing" description="Up-front, subscription pricing for a Fractional Forward Deployed Engineer in Dallas–Fort Worth. Maintenance plans and fixed-price project bids available.">
+  <section class="section section--tight">
+    <div class="container">
+      <p class="eyebrow center" style="justify-content:center">Pricing</p>
+      <h1 class="center" style="margin-bottom:14px">Flat pricing, no surprises</h1>
+      <p class="center muted" style="max-width:62ch;margin:0 auto 22px">
+        The core offering is a flat monthly subscription, no surprises to your budget.
+        Just like hiring a full-time software engineer, you get predictable work done at a pace you're comfortable with.
+        Weekly progress reports give you insight into what is being built, and biweekly roadmapping meetings give you
+        directional control.
+        Regular on-site visits build trust with the team and enable us to ship only what you actually need.
+      </p>
+      <div class="center"><Availability /></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:8px">
+    <div class="container">
+      <div class="pricing">
+        <!-- Maintenance (left, minimal) -->
+        <div class="plan plan--minimal">
+          <div class="plan-head">
+            <span class="plan-kind">Maintenance only</span>
+            <div class="plan-price"><span class="amt">$599</span><span class="per">/ mo</span></div>
+            <p class="plan-sub">Keep the lights on after a build engagement.</p>
+          </div>
+          <ul class="plan-list">
+            <li>Includes up to <strong>$200/mo</strong> of hosting &amp; AI token costs</li>
+            <li>Bug fixes &amp; dependency upkeep</li>
+            <li>Uptime &amp; security patching</li>
+            <li>Email support, same-week response</li>
+            <li class="muted-li">Available <strong>after</strong> a subscription engagement</li>
+          </ul>
+          <a class="btn btn--ghost plan-btn" href="/contact/?topic=maintenance">Ask about maintenance</a>
+          <p class="plan-foot">A graceful off-ramp — step down from active build to light upkeep without losing your engineer.</p>
+          <p class="plan-fine">Up to 4 hours of work per month, averaged over 3 months.</p>
+        </div>
+
+        <!-- Subscription (middle, featured) -->
+        <div class="plan plan--featured">
+          <span class="ribbon">The engagement</span>
+          <div class="plan-head">
+            <span class="plan-kind">Fractional FDE Subscription</span>
+            <div class="plan-price"><span class="amt">$5,995</span><span class="per">/ mo</span></div>
+            <p class="plan-sub">A senior, AI-native engineer embedded in your business.</p>
+          </div>
+          <ul class="plan-list">
+            <li>One forward deployed engineer, dedicated to your roadmap</li>
+            <li>Continuous build — AI features, software, integrations</li>
+            <li>On-site kickoff &amp; ongoing in-person time across DFW</li>
+            <li>Weekly prioritization with you; ship every week</li>
+            <li>Up to <strong>2 on-site days / month</strong></li>
+            <li>Direct access — no ticket queue, no account managers</li>
+            <li><strong>6-month minimum</strong> engagement</li>
+          </ul>
+          <a class="btn btn--primary plan-btn" href="/waitlist/">Join the waitlist →</a>
+          <p class="plan-foot">Currently full. The waitlist is the only way in — you'll be first to know when a slot opens.</p>
+          <p class="plan-fine">Up to 40 hours of work per month, averaged over 3 months.</p>
+        </div>
+
+        <!-- Project bid (right) -->
+        <div class="plan plan--project">
+          <div class="plan-head">
+            <span class="plan-kind">Got a project in mind?</span>
+            <div class="plan-price"><span class="amt">Fixed</span><span class="per">bid</span></div>
+            <p class="plan-sub">A defined scope with one firm price.</p>
+          </div>
+          <ul class="plan-list">
+            <li>Firm fixed-price proposal</li>
+            <li>Clear scope, milestones &amp; deadline</li>
+            <li>Great for a one-off build or proof of concept</li>
+            <li>No monthly commitment</li>
+            <li>A low-risk way to work together first</li>
+          </ul>
+          <a class="btn btn--ghost plan-btn" href="/contact/?topic=project">Request a bid →</a>
+          <p class="plan-foot">Tell me what you want built. I'll come back with a fixed price and timeline — no hourly surprises.</p>
+        </div>
+      </div>
+
+      <p class="center muted disclaimer">
+        Subscription pricing reflects current market rates for fractional, senior engineering in
+        Dallas–Fort Worth. Engagements require a {site.minEngagementMonths}-month minimum so we can
+        compound real outcomes rather than ship disconnected one-offs.
+      </p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section section--tight">
+    <div class="container narrow">
+      <h2 class="center" style="margin-bottom:28px">Pricing questions, answered</h2>
+      <div class="faq">
+        <details>
+          <summary>Why a waitlist?</summary>
+          <p>Forward deployed means genuinely embedded. To learn a business deeply and build for it
+          well, I cap the practice at only a few active clients. It keeps the work high-touch and
+          honest.</p>
+        </details>
+        <details>
+          <summary>Why a six-month minimum?</summary>
+          <p>Real software and AI outcomes compound. The first weeks are spent learning your domain
+          and standing things up; the value shows up as that knowledge turns into shipped product
+          month after month. Six months is the floor for that to pay off.</p>
+        </details>
+        <details>
+          <summary>What happens when the build is done?</summary>
+          <p>You can transition to the <strong>Maintenance only</strong> plan ($599/mo, which
+          includes up to $200/mo of hosting &amp; AI token costs) to keep everything patched and
+          healthy — or scope a fixed-price project when something new comes up. You're never forced
+          to keep paying for full build capacity you no longer need.</p>
+        </details>
+        <details>
+          <summary>Can we start with a fixed-price project instead?</summary>
+          <p>Absolutely. A firm fixed-price project is a low-risk way to work together before
+          committing to a subscription. <a href="/contact/?topic=project">Request a bid</a> and
+          we'll scope it.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .pricing { display: grid; grid-template-columns: 1fr 1.18fr 1fr; gap: 22px; align-items: stretch; }
+  .plan {
+    display: flex; flex-direction: column;
+    border: 1px solid var(--border); border-radius: 20px; padding: 30px 26px;
+    background: linear-gradient(180deg, var(--panel), var(--bg-soft));
+    position: relative;
+  }
+  .plan--minimal, .plan--project { margin-top: 18px; }
+  .plan--featured {
+    border-color: rgba(54, 214, 195, 0.55);
+    background: linear-gradient(170deg, var(--panel-2), var(--bg-soft));
+    box-shadow: 0 30px 60px -30px rgba(54, 214, 195, 0.45);
+  }
+  .ribbon {
+    position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(120deg, var(--brand), var(--brand-2)); color: #07101f;
+    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+    font-weight: 700; padding: 6px 14px; border-radius: 999px; white-space: nowrap;
+  }
+  .plan-kind { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--brand); font-family: var(--mono); }
+  .plan-price { display: flex; align-items: baseline; gap: 8px; margin: 14px 0 6px; }
+  .amt { font-size: 2.6rem; font-weight: 700; letter-spacing: -0.03em; }
+  .per { color: var(--muted-2); font-size: 0.95rem; }
+  .plan-sub { font-size: 0.95rem; min-height: 2.8em; }
+  .plan-list { list-style: none; padding: 0; margin: 18px 0 22px; flex: 1; }
+  .plan-list li { position: relative; padding-left: 26px; margin-bottom: 11px; font-size: 0.94rem; color: var(--muted); }
+  .plan-list li::before { content: '✓'; position: absolute; left: 0; color: var(--brand); font-weight: 700; }
+  .plan-list .muted-li { color: var(--muted-2); }
+  .plan-list .muted-li::before { content: '→'; color: var(--accent); }
+  .plan-btn { width: 100%; }
+  .plan-foot { font-size: 0.84rem; color: var(--muted-2); margin: 16px 0 0; }
+  .plan-fine { font-size: 0.78rem; color: var(--muted-2); opacity: 0.7; margin: 8px 0 0; font-style: italic; }
+  .disclaimer { max-width: 70ch; margin: 36px auto 0; font-size: 0.88rem; }
+
+  .narrow { max-width: 760px; }
+  .faq details {
+    border: 1px solid var(--border); border-radius: 12px; padding: 4px 20px; margin-bottom: 12px;
+    background: var(--bg-soft);
+  }
+  .faq summary { cursor: pointer; font-weight: 600; padding: 14px 0; list-style: none; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: '+'; float: right; color: var(--brand); font-size: 1.2rem; }
+  .faq details[open] summary::after { content: '–'; }
+  .faq p { margin: 0 0 16px; font-size: 0.95rem; }
+  .faq a { color: var(--brand); }
+
+  @media (max-width: 980px) {
+    .pricing { grid-template-columns: 1fr; }
+    .plan--minimal, .plan--project { margin-top: 0; }
+    .plan--featured { order: -1; }
+  }
+</style>

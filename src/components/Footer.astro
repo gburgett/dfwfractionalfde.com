@@ -1,0 +1,58 @@
+---
+import { site } from '../data/site';
+const year = new Date().getFullYear();
+---
+<footer class="site-footer">
+  <div class="container foot">
+    <div class="foot-brand">
+      <span class="brand-mark">FDE</span>
+      <p class="foot-tag">
+        Fractional Forward Deployed Engineering for {site.region} small &amp; mid-sized businesses.
+        AI-native software, built on-site.
+      </p>
+    </div>
+
+    <div class="foot-cols">
+      <div>
+        <h4>Engagement</h4>
+        <a href="/how-it-works/">How it works</a>
+        <a href="/pricing/">Pricing</a>
+        <a href="/waitlist/">Join the waitlist</a>
+        <a href="/contact/">Project bid</a>
+      </div>
+      <div>
+        <h4>About</h4>
+        <a href="/about/">About Gordon</a>
+        <a href="/insights/">Insights</a>
+        <a href={site.owner.personalSite} rel="noopener" target="_blank">gordonburgett.net ↗</a>
+      </div>
+    </div>
+  </div>
+  <div class="container foot-bottom">
+    <span>© {year} {site.name} · {site.domain}</span>
+    <span>Built with Astro · Serving Dallas–Fort Worth</span>
+  </div>
+</footer>
+
+<style>
+  .site-footer { border-top: 1px solid var(--border-soft); margin-top: 40px; background: rgba(8, 12, 24, 0.5); }
+  .foot { display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; padding: 56px 24px 32px; }
+  .brand-mark {
+    font-family: var(--mono); font-weight: 700; font-size: 0.82rem; color: #07101f;
+    background: linear-gradient(120deg, var(--brand), var(--brand-2));
+    padding: 8px 10px; border-radius: 9px; display: inline-block;
+  }
+  .foot-tag { margin-top: 16px; max-width: 38ch; }
+  .foot-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .foot-cols h4 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted-2); margin-bottom: 12px; }
+  .foot-cols a { display: block; color: var(--muted); padding: 4px 0; font-size: 0.95rem; }
+  .foot-cols a:hover { color: var(--brand); }
+  .foot-bottom {
+    display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+    padding: 18px 24px 40px; border-top: 1px solid var(--border-soft);
+    color: var(--muted-2); font-size: 0.84rem;
+  }
+  @media (max-width: 880px) {
+    .foot { grid-template-columns: 1fr; gap: 28px; }
+  }
+</style>

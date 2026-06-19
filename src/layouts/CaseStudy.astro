@@ -1,0 +1,35 @@
+---
+import Base from './Base.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  entry: CollectionEntry<'caseStudies'>;
+}
+
+const { entry } = Astro.props;
+const { title, description, date, client } = entry.data;
+
+const dateLabel = date.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'short',
+  day: 'numeric',
+});
+---
+
+<Base title={title} description={description}>
+  <section class="section section--tight">
+    <div class="container">
+      <p class="eyebrow">Case study</p>
+      <h1 style="max-width:24ch">{title}</h1>
+      <p class="muted" style="margin-bottom:28px">
+        {dateLabel} · {client}
+      </p>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container prose">
+      <slot />
+    </div>
+  </section>
+</Base>

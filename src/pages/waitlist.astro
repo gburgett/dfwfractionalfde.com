@@ -1,0 +1,101 @@
+---
+import Base from '../layouts/Base.astro';
+import Availability from '../components/Availability.astro';
+import { site } from '../data/site';
+---
+<Base title="Join the waitlist" description="Join the waitlist for a Fractional Forward Deployed Engineer in Dallas–Fort Worth. Currently full — get first notice when a slot opens.">
+  <section class="section section--tight">
+    <div class="container narrow">
+      <p class="eyebrow">Waitlist</p>
+      <h1>Claim the next open slot</h1>
+      <p class="lead" style="margin-bottom:20px">
+        I'm currently full. Add yourself to the waitlist and you'll be the
+        first to hear when a slot opens — no spam, no obligation.
+      </p>
+      <Availability />
+
+      <div id="error" class="notice notice--warn" style="margin-top:22px; display:none">
+        Please add your name and a valid email so I can reach you.
+      </div>
+
+      <form class="form card" method="POST" action="/api/waitlist">
+        <input type="text" name="company_website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" />
+
+        <div class="two">
+          <div class="field">
+            <label for="name">Name *</label>
+            <input id="name" name="name" required autocomplete="name" />
+          </div>
+          <div class="field">
+            <label for="email">Email *</label>
+            <input id="email" name="email" type="email" required autocomplete="email" />
+          </div>
+        </div>
+
+        <div class="two">
+          <div class="field">
+            <label for="company">Company</label>
+            <input id="company" name="company" autocomplete="organization" />
+          </div>
+          <div class="field">
+            <label for="industry">Industry</label>
+            <input id="industry" name="industry" placeholder="e.g. healthcare, professional services, manufacturing" />
+          </div>
+        </div>
+
+        <div class="two">
+          <div class="field">
+            <label for="timeline">When would you want to start?</label>
+            <select id="timeline" name="timeline">
+              <option value="">Select…</option>
+              <option>As soon as a slot opens</option>
+              <option>Next 1–3 months</option>
+              <option>3–6 months out</option>
+              <option>Just exploring</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="budget">Monthly budget comfort</label>
+            <select id="budget" name="budget">
+              <option value="">Select…</option>
+              <option>Around $5,995/mo (subscription)</option>
+              <option>Flexible for the right fit</option>
+              <option>Maintenance only (~$599/mo)</option>
+              <option>Prefer a fixed-price project</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="message">What would you want built? (optional)</label>
+          <textarea id="message" name="message" placeholder="A sentence or two about the software or AI work you have in mind."></textarea>
+        </div>
+
+        <div class="field">
+          <label for="source">How did you hear about me? (optional)</label>
+          <input id="source" name="source" />
+        </div>
+
+        <button class="btn btn--primary" type="submit" style="width:100%">Join the waitlist →</button>
+        <p class="muted" style="font-size:0.82rem;margin:14px 0 0">
+          Prefer to talk about a one-off build instead? <a class="textlink" href="/contact/?topic=project">Request a fixed-price bid →</a>
+        </p>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<script is:inline>
+  if (new URLSearchParams(location.search).get('error')) {
+    document.getElementById('error').style.display = 'block';
+  }
+</script>
+
+<style>
+  .narrow { max-width: 760px; }
+  .form { margin-top: 26px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .textlink { color: var(--brand); font-weight: 600; }
+  @media (max-width: 620px) { .two { grid-template-columns: 1fr; } }
+</style>

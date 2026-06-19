@@ -1,0 +1,126 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../data/site';
+
+const stack = {
+  Languages: ['Go', 'Rust', 'TypeScript', 'C# / .NET'],
+  Cloud: ['AWS', 'Azure', 'Docker', 'Kubernetes'],
+  Data: ['PostgreSQL', 'MongoDB', 'Redis'],
+  Patterns: ['Distributed systems', 'Actor model', 'Microservices', 'Event-driven'],
+};
+
+const focus = [
+  { t: 'AI / ML Engineering', d: 'Full-lifecycle AI workflow integration, LLM implementation and optimization, ML pipeline architecture, and custom AI for mission-critical systems.' },
+  { t: 'Systems Architecture', d: 'Distributed systems design, microservices and cloud-native architecture, API design and integration, performance and scalability.' },
+  { t: 'Technical Leadership', d: 'Cross-functional team leadership and mentorship, driving AI transformation in software engineering, Agile/DevOps, and technology selection.' },
+];
+---
+<Base title="About Gordon Burgett" description="Gordon Burgett — Director of Software Engineering and Director of HealthShare Technology Solutions. 15+ years of software engineering, now offered fractionally to DFW businesses.">
+  <section class="section section--tight">
+    <div class="container">
+      <div class="about-head">
+        <div>
+          <p class="eyebrow">About your engineer</p>
+          <h1>Gordon Burgett</h1>
+          <p class="lead" style="margin-top:18px">
+            Engineering leader with <strong>15+ years</strong> of software engineering expertise,
+            with experience leading AI workflow transformation at medium-sized businesses. I'm bringing that same
+            senior, AI-native capability directly to Dallas–Fort Worth businesses — fractionally,
+            and on-site.
+          </p>
+          <div class="cta-row">
+            <a class="btn btn--primary" href="/waitlist/">Work with me →</a>
+            <a class="btn btn--ghost" href={site.owner.personalSite} target="_blank" rel="noopener">gordonburgett.net ↗</a>
+          </div>
+        </div>
+        <div class="portrait">
+          <img src={site.owner.headshot} alt="Gordon Burgett" loading="lazy" width="320" height="320" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:8px">
+    <div class="container">
+      <p class="eyebrow">Where I focus</p>
+      <h2 style="margin-bottom:28px">Capabilities I bring to your business</h2>
+      <div class="grid grid--3">
+        {focus.map((f) => (
+          <div class="card">
+            <h3 style="margin-bottom:10px">{f.t}</h3>
+            <p style="margin:0">{f.d}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container">
+      <div class="split">
+        <div>
+          <p class="eyebrow">Beyond the keyboard</p>
+          <h2>Engineering with a mission</h2>
+          <p>
+            In my spare time I help churches navigate the complexities of healthcare
+            cost-sharing ministries such as Christian Healthcare Ministries — the work behind
+            <strong>HealthShare Technology Solutions</strong>, where I build AI agents designed to
+            genuinely empower people, not just "augment" them.
+          </p>
+          <p>
+            That same conviction shapes how I work with clients: technology should make real
+            people's work measurably better. I write about the craft of building software with AI
+            agents — you can read those notes on the <a class="textlink" href="/insights/">Insights</a> page.
+          </p>
+        </div>
+        <div>
+          <div class="card stack">
+            <h3 style="margin-bottom:16px">Technology stack</h3>
+            {Object.entries(stack).map(([k, vals]) => (
+              <div class="stack-row">
+                <span class="stack-k">{k}</span>
+                <div class="chips">
+                  {vals.map((v) => <span class="chip">{v}</span>)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container center">
+      <h2>Let's build something together</h2>
+      <p class="muted" style="max-width:48ch;margin:0 auto 24px">
+        Slots are limited to five clients with a six-month minimum. Join the waitlist or bring me a
+        project to bid.
+      </p>
+      <div class="cta-row" style="justify-content:center">
+        <a class="btn btn--primary" href="/waitlist/">Join the waitlist →</a>
+        <a class="btn btn--ghost" href="/contact/">Got a project in mind?</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .about-head { display: grid; grid-template-columns: 1.4fr 0.9fr; gap: 48px; align-items: center; }
+  .role { color: var(--text); font-weight: 600; margin: 0; }
+  .role--alt { color: var(--muted); font-weight: 500; margin-bottom: 0; }
+  .portrait img { width: 100%; max-width: 320px; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow); }
+  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 26px; }
+  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: start; }
+  .textlink { color: var(--brand); font-weight: 600; }
+  .stack-row { display: grid; grid-template-columns: 96px 1fr; gap: 14px; padding: 12px 0; border-top: 1px solid var(--border-soft); }
+  .stack-row:first-of-type { border-top: none; }
+  .stack-k { font-family: var(--mono); font-size: 0.8rem; color: var(--muted-2); text-transform: uppercase; letter-spacing: 0.06em; padding-top: 4px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { font-size: 0.85rem; padding: 5px 11px; border: 1px solid var(--border); border-radius: 999px; color: var(--text); background: var(--bg-soft); }
+  @media (max-width: 880px) {
+    .about-head { grid-template-columns: 1fr; gap: 28px; }
+    .portrait { order: -1; }
+    .split { grid-template-columns: 1fr; gap: 26px; }
+  }
+</style>

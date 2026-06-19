@@ -1,0 +1,38 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Thank you" description="Thanks — your message was received.">
+  <section class="section">
+    <div class="container narrow center">
+      <div class="check">✓</div>
+      <h1 id="heading">You're on the list</h1>
+      <p id="body" class="lead" style="margin:0 auto 28px">
+        Thanks — I've received your details and I'll be in touch personally.
+      </p>
+      <div class="cta-row" style="justify-content:center">
+        <a class="btn btn--primary" href="/">Back to home</a>
+        <a class="btn btn--ghost" href="/insights/">Read some insights</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script is:inline>
+  const type = new URLSearchParams(location.search).get('type');
+  if (type === 'contact') {
+    document.getElementById('heading').textContent = 'Request received';
+    document.getElementById('body').textContent =
+      "Thanks — I've got your project details. I'll review them and come back to you with a firm fixed-price bid.";
+  }
+</script>
+
+<style>
+  .narrow { max-width: 640px; }
+  .check {
+    width: 72px; height: 72px; margin: 0 auto 22px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 2rem; color: #07101f; font-weight: 700;
+    background: linear-gradient(120deg, var(--brand), var(--brand-2));
+    box-shadow: 0 16px 40px -16px rgba(54, 214, 195, 0.6);
+  }
+  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; }
+</style>

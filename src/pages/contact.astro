@@ -1,0 +1,86 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../data/site';
+---
+<Base title="Got a project in mind?" description="Bring a defined project and get a firm fixed-price bid from a senior DFW engineer — clear scope, milestones, and one price. Or ask about a maintenance plan.">
+  <section class="section section--tight">
+    <div class="container narrow">
+      <p class="eyebrow">Project bid &amp; contact</p>
+      <h1>Got a project in mind?</h1>
+      <p class="lead" style="margin-bottom:8px">
+        Tell me what you want built and I'll come back with a <strong>firm fixed-price bid</strong> —
+        clear scope, milestones, and one price. No hourly surprises. A fixed-price project is also a
+        low-risk way to work together before a subscription engagement.
+      </p>
+
+      <div id="error" class="notice notice--warn" style="margin-top:20px; display:none">
+        Please include your name, a valid email, and a short description so I can prepare a bid.
+      </div>
+
+      <form class="form card" method="POST" action="/api/contact">
+        <input type="text" name="company_website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" />
+
+        <div class="field">
+          <label for="topic">What's this about?</label>
+          <select id="topic" name="topic">
+            <option value="project">A fixed-price project</option>
+            <option value="maintenance">Maintenance plan ($599/mo)</option>
+            <option value="general">Something else</option>
+          </select>
+        </div>
+
+        <div class="two">
+          <div class="field">
+            <label for="name">Name *</label>
+            <input id="name" name="name" required autocomplete="name" />
+          </div>
+          <div class="field">
+            <label for="email">Email *</label>
+            <input id="email" name="email" type="email" required autocomplete="email" />
+          </div>
+        </div>
+
+        <div class="two">
+          <div class="field">
+            <label for="company">Company</label>
+            <input id="company" name="company" autocomplete="organization" />
+          </div>
+          <div class="field">
+            <label for="budget">Rough budget (optional)</label>
+            <input id="budget" name="budget" placeholder="Helps me right-size the proposal" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="message">Project details *</label>
+          <textarea id="message" name="message" required placeholder="What do you want built, what does success look like, and is there a deadline?"></textarea>
+          <span class="hint">The more detail you share, the tighter the fixed price I can quote.</span>
+        </div>
+
+        <button class="btn btn--primary" type="submit" style="width:100%">Request a bid →</button>
+        <p class="muted" style="font-size:0.82rem;margin:14px 0 0">
+          Looking for the ongoing subscription instead? <a class="textlink" href="/waitlist/">Join the waitlist →</a>
+        </p>
+      </form>
+    </div>
+  </section>
+</Base>
+
+<script is:inline>
+  const params = new URLSearchParams(location.search);
+  if (params.get('error')) document.getElementById('error').style.display = 'block';
+  const topic = params.get('topic');
+  if (topic) {
+    const sel = document.getElementById('topic');
+    for (const opt of sel.options) if (opt.value === topic) sel.value = topic;
+  }
+</script>
+
+<style>
+  .narrow { max-width: 760px; }
+  .form { margin-top: 26px; }
+  .two { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+  .textlink { color: var(--brand); font-weight: 600; }
+  @media (max-width: 620px) { .two { grid-template-columns: 1fr; } }
+</style>

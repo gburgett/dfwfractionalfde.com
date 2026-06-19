@@ -1,0 +1,102 @@
+---
+import { nav, site } from '../data/site';
+const path = Astro.url.pathname;
+---
+<header class="site-header">
+  <div class="container bar">
+    <a class="brand" href="/">
+      <span class="brand-mark">FDE</span>
+      <span class="brand-text">
+        <strong>DFW Fractional</strong>
+        <small>Forward Deployed Engineer</small>
+      </span>
+    </a>
+
+    <input type="checkbox" id="navToggle" class="nav-toggle" hidden />
+    <label for="navToggle" class="nav-burger" aria-label="Toggle navigation">
+      <span></span><span></span><span></span>
+    </label>
+
+    <nav class="nav">
+      {nav.map((item) => (
+        <a
+          href={item.href}
+          class={`nav-link ${path === item.href ? 'is-active' : ''} ${
+            item.href === '/waitlist/' ? 'nav-link--cta' : ''
+          }`}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(12px);
+    background: rgba(11, 16, 32, 0.72);
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .bar { display: flex; align-items: center; justify-content: space-between; height: 70px; }
+  .brand { display: inline-flex; align-items: center; gap: 12px; }
+  .brand-mark {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 0.82rem;
+    letter-spacing: 0.06em;
+    color: #07101f;
+    background: linear-gradient(120deg, var(--brand), var(--brand-2));
+    padding: 8px 10px;
+    border-radius: 9px;
+  }
+  .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+  .brand-text strong { font-size: 0.98rem; }
+  .brand-text small { color: var(--muted); font-size: 0.74rem; letter-spacing: 0.02em; }
+
+  .nav { display: flex; align-items: center; gap: 6px; }
+  .nav-link {
+    font-size: 0.92rem;
+    color: var(--muted);
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: color 0.15s ease, background 0.15s ease;
+  }
+  .nav-link:hover { color: var(--text); }
+  .nav-link.is-active { color: var(--text); }
+  .nav-link--cta {
+    color: #07101f;
+    background: linear-gradient(120deg, var(--brand), var(--brand-2));
+    font-weight: 600;
+  }
+  .nav-link--cta:hover { color: #07101f; opacity: 0.92; }
+
+  .nav-toggle, .nav-burger { display: none; }
+
+  @media (max-width: 880px) {
+    .nav-burger {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 8px;
+    }
+    .nav-burger span { width: 22px; height: 2px; background: var(--text); border-radius: 2px; }
+    .nav {
+      position: absolute;
+      top: 70px; left: 0; right: 0;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 2px;
+      padding: 14px 24px 22px;
+      background: var(--bg-soft);
+      border-bottom: 1px solid var(--border);
+      display: none;
+    }
+    .nav-toggle:checked ~ .nav { display: flex; }
+    .nav-link { padding: 12px 10px; }
+  }
+</style>

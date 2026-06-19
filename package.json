@@ -1,0 +1,20 @@
+{
+  "name": "dfwfractionalfde",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "DFW Fractional Forward Deployed Engineer — Gordon Burgett",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "node ./dist/server/entry.mjs",
+    "deploy": "bash scripts/deploy.sh",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/node": "^9.0.0",
+    "@astrojs/sitemap": "^3.2.0",
+    "astro": "^5.1.0",
+    "zod": "^4.4.3"
+  }
+}
