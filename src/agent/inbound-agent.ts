@@ -57,6 +57,14 @@ ${email.bodyText}
 
 4. **Always call \`mark_processed\`** — for every email, regardless of category. This records the outcome so we don't process it again.
 
+## Recognizing follow-up replies
+
+This email might be a reply to a **follow-up email you previously sent** from a contact form submission. Use \`search_conversations\` to check for prior context — if you find that a follow-up was recently sent to this person and they are now responding with genuine interest, this is a strong signal they may be ready to move forward.
+
+## Creating qualified opportunities
+
+If a sender is responding to a prior follow-up and clearly expresses interest in working with Gordon (e.g. they want to discuss scope, timeline, budget, or schedule a call), call \`create_qualified_opportunity\` in addition to replying. This notifies Gordon directly with all the details.
+
 ## Reply guidelines
 
 - Open with a brief, natural introduction as Daneel — Gordon's AI assistant — unless the sender clearly already knows who you are from prior exchange.
@@ -173,7 +181,60 @@ function createTools(db: ReturnType<typeof getDb>, emailId: number, fromEmail: s
     },
   });
 
-  return [sendReplyTool, markProcessedTool, searchConversationsTool] as const;
+  const createOpportunityTool = defineTool({
+    name: 'create_qualified_opportunity',
+    label: 'Create Qualified Opportunity',
+    description: 'Creates a qualified sales opportunity and emails Gordon with all the details. Call this when a genuine prospect clearly expresses interest in hiring Gordon (wants to discuss scope, budget, timeline, pricing, or schedule a call). Only call for qualified leads — not for casual questions or tire-kickers.',
+    parameters: Type.Object({
+      name: Type.String({ description: 'Contact full name' }),
+      email: Type.String({ description: 'Contact email address' }),
+      company: Type.Optional(Type.String({ description: 'Company name (if shared)' })),
+      summary: Type.String({ description: '2–3 sentence summary of what they want (project type, scope, urgency, any specific tech or use cases mentioned)' }),
+      budget: Type.Optional(Type.String({ description: 'Budget range or indication they shared (if any)' })),
+      timeline: Type.Optional(Type.String({ description: 'Timeline or urgency they indicated (if any)' })),
+      next_steps: Type.String({ description: 'What was agreed or suggested next (e.g. "suggested a 30-min call next week", "they want a proposal by Friday")' }),
+    }),
+    execute: async (_toolCallId, params) => {
+      try {
+        const { name, email, company, summary, budget, timeline, next_steps } = params;
+
+        const subject = `[Opportunity] ${name}${company ? ` — ${company}` : ''}`;
+        const text = [
+          'Qualified opportunity from Daneel\n',
+          `Name:       ${name}`,
+          `Email:      ${email}`,
+          `Company:    ${company ?? '(not shared)'}`,
+          `Budget:     ${budget ?? '(not shared)'}`,
+          `Timeline:   ${timeline ?? '(not shared)'}`,
+          '',
+          'Summary:',
+          summary,
+          '',
+          'Next steps:',
+          next_steps,
+          '',
+          `— Daneel`,
+          `AI assistant to Gordon Burgett`,
+        ].join('\n');
+
+        const messageId = await sendEmail({
+          to: site.contactEmail,
+          toName: site.owner.name,
+          subject,
+          text,
+        });
+
+        console.log(`[inbound-agent] Created opportunity for ${name} <${email}> (messageId=${messageId})`);
+        return { content: [{ type: 'text' as const, text: JSON.stringify({ success: true, messageId }) }], details: {} };
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.error('[inbound-agent] create_qualified_opportunity failed:', msg);
+        return { content: [{ type: 'text' as const, text: JSON.stringify({ error: msg }) }], details: {} };
+      }
+    },
+  });
+
+  return [sendReplyTool, markProcessedTool, searchConversationsTool, createOpportunityTool] as const;
 }
 
 /** Returns true if the email's processed_at column is non-null. */
@@ -212,7 +273,7 @@ export async function runInboundAgent(): Promise<void> {
     // Generate embedding for this email so future RAG searches can find it
     await ensureEmbedding(db, email.id, email.subject, email.bodyText);
 
-    const [sendReplyTool, markProcessedTool, searchConversationsTool] =
+    const [sendReplyTool, markProcessedTool, searchConversationsTool, createOpportunityTool] =
       createTools(db, email.id, email.fromEmail);
 
     const loader = new DefaultResourceLoader({
@@ -225,7 +286,7 @@ export async function runInboundAgent(): Promise<void> {
     const { session } = await createAgentSession({
       model,
       noTools: 'builtin',
-      customTools: [sendReplyTool, markProcessedTool, searchConversationsTool],
+      customTools: [sendReplyTool, markProcessedTool, searchConversationsTool, createOpportunityTool],
       resourceLoader: loader,
       sessionManager: SessionManager.inMemory(),
       settingsManager: SettingsManager.inMemory({ compaction: { enabled: false } }),
