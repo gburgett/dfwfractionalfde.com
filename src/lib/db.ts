@@ -1,10 +1,13 @@
 import Database from 'better-sqlite3';
 import path from 'node:path';
 import { mkdirSync } from 'node:fs';
+import { load as loadVec } from 'sqlite-vec';
 import { env } from './env.js';
 
 const DB_DIR = env.DB_DIR;
 export const DB_PATH = path.join(DB_DIR, 'agent.db');
+
+const EMBEDDING_DIMS = 384;
 
 let _db: Database.Database | null = null;
 
@@ -13,6 +16,10 @@ export function getDb(): Database.Database {
   mkdirSync(DB_DIR, { recursive: true });
   _db = new Database(DB_PATH);
   _db.pragma('journal_mode = WAL');
+
+  // ── Load sqlite-vec extension ──────────────────────────────────────
+  loadVec(_db);
+
   _db.exec(`
     CREATE TABLE IF NOT EXISTS submissions (
       id             INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,21 +62,32 @@ export function getDb(): Database.Database {
     CREATE INDEX IF NOT EXISTS idx_inbound_pending
       ON inbound_emails (processed_at)
       WHERE processed_at IS NULL;
+
+    -- Embedding storage (one row per inbound email)
+    CREATE TABLE IF NOT EXISTS email_embeddings (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      email_id   INTEGER NOT NULL UNIQUE REFERENCES inbound_emails(id) ON DELETE CASCADE,
+      embedding  BLOB NOT NULL,
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_email_embeddings_email
+      ON email_embeddings (email_id);
+
+    -- vec0 virtual table for ANN search
+    CREATE VIRTUAL TABLE IF NOT EXISTS vec_email_embeddings USING vec0(
+      email_id INTEGER PRIMARY KEY,
+      embedding FLOAT[${EMBEDDING_DIMS}]
+    );
   `);
 
-  // Migrate existing tables that predate the to_email column (safe to re-run)
-  try {
-    _db.exec('ALTER TABLE inbound_emails ADD COLUMN to_email TEXT');
-  } catch {
-    // column already exists — ignore
-  }
-
-  // Index on to_email — created after migration so it works on pre-existing DBs
-  try {
-    _db.exec('CREATE INDEX IF NOT EXISTS idx_inbound_to_email ON inbound_emails (to_email)');
-  } catch {
-    // column still missing somehow — ignore
-  }
+  // ── Migrations for pre-existing tables (safe to re-run) ────────────
+  try { _db.exec('ALTER TABLE inbound_emails ADD COLUMN to_email TEXT'); } catch { /* exists */ }
+  try { _db.exec('CREATE INDEX IF NOT EXISTS idx_inbound_to_email ON inbound_emails (to_email)'); } catch { /* exists */ }
 
   return _db;
+}
+
+/** Number of embedding dimensions used throughout the app. */
+export function embeddingDims(): number {
+  return EMBEDDING_DIMS;
 }

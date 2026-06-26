@@ -16,6 +16,7 @@ import { assertAgentEnv, env } from '../lib/env.js';
 import { syncInbox, getPendingEmails, type InboundEmail } from './tools/imap.js';
 import { sendEmail } from './tools/email.js';
 import { site } from '../data/site.js';
+import { ensureEmbedding, searchConversations } from '../lib/rag.js';
 
 assertAgentEnv();
 
@@ -50,14 +51,16 @@ ${email.bodyText}
    - **spam**: Gibberish, test messages, clearly automated bot submissions, phishing, or completely irrelevant content.
    - **other**: Doesn't fit above (e.g., job applications, partnership proposals, media inquiries, general questions about the field).
 
-2. If the category is **genuine_inquiry**: compose a warm, personalized reply and call \`send_reply\`.
+2. Before categorizing, optionally call \`search_conversations\` to look up past exchanges with this sender — useful for context if they've reached out before or you've replied before.
 
-3. **Always call \`mark_processed\`** — for every email, regardless of category. This records the outcome so we don't process it again.
+3. If the category is **genuine_inquiry**: compose a warm, personalized reply and call \`send_reply\`.
+
+4. **Always call \`mark_processed\`** — for every email, regardless of category. This records the outcome so we don't process it again.
 
 ## Reply guidelines
 
 - Open with a brief, natural introduction as Daneel — Gordon's AI assistant — unless the sender clearly already knows who you are from prior exchange.
-- Warm and personal, not templated-sounding. Reference specifics from their message.
+- Warm and personal, not templated-sounding. Reference specifics from their message **and any relevant past conversations** you found via search_conversations.
 - Keep it brief: 3–5 short paragraphs.
 - ${site.openClients === 0 ? "Gordon's calendar is currently full. Acknowledge the waitlist situation honestly, set realistic expectations, and ask a question to understand their timeline and what they're trying to build — this keeps the conversation warm." : "Express genuine interest on Gordon's behalf and suggest a 30-min call for them to connect directly."}
 - End with a clear, specific next step.
@@ -68,8 +71,8 @@ ${email.bodyText}
 Warm, professional, and direct. Mirror Gordon's style: conversational, technically curious, not over-explained. Be matter-of-fact about being an AI without making it the focus.`;
 }
 
-/** Create tools scoped to a specific email id. */
-function createTools(db: ReturnType<typeof getDb>, emailId: number) {
+/** Create tools scoped to a specific email id and its sender. */
+function createTools(db: ReturnType<typeof getDb>, emailId: number, fromEmail: string) {
   const sendReplyTool = defineTool({
     name: 'send_reply',
     label: 'Send Reply',
@@ -149,7 +152,28 @@ function createTools(db: ReturnType<typeof getDb>, emailId: number) {
     },
   });
 
-  return [sendReplyTool, markProcessedTool] as const;
+  const searchConversationsTool = defineTool({
+    name: 'search_conversations',
+    label: 'Search Conversations',
+    description: 'Search past email conversations with this sender. Use this to get context on previous exchanges before replying.',
+    parameters: Type.Object({
+      query: Type.String({ description: 'What you want to find in past conversations (e.g. "previous project discussion", "budget mentioned")' }),
+    }),
+    execute: async (_toolCallId, params) => {
+      try {
+        const { query } = params;
+        const results = await searchConversations(db, query, fromEmail);
+        console.log(`[inbound-agent] search_conversations("${query}", contact=${fromEmail}) → ${results.length} result(s)`);
+        return { content: [{ type: 'text' as const, text: JSON.stringify(results) }], details: {} };
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.error('[inbound-agent] search_conversations failed:', msg);
+        return { content: [{ type: 'text' as const, text: JSON.stringify({ error: msg }) }], details: {} };
+      }
+    },
+  });
+
+  return [sendReplyTool, markProcessedTool, searchConversationsTool] as const;
 }
 
 /** Returns true if the email's processed_at column is non-null. */
@@ -165,6 +189,7 @@ export async function runInboundAgent(): Promise<void> {
   // ── Harness: sync inbox and check for unprocessed emails ──────────────
   console.log('[inbound-agent] Syncing inbox...');
   await syncInbox(db);
+
   const agentEmail = env.EASYMAIL_AGENT_EMAIL;
   const pending = getPendingEmails(db, agentEmail);
 
@@ -184,7 +209,11 @@ export async function runInboundAgent(): Promise<void> {
   for (const email of pending) {
     console.log(`[inbound-agent] Processing email id=${email.id} from ${email.fromEmail}...`);
 
-    const [sendReplyTool, markProcessedTool] = createTools(db, email.id);
+    // Generate embedding for this email so future RAG searches can find it
+    await ensureEmbedding(db, email.id, email.subject, email.bodyText);
+
+    const [sendReplyTool, markProcessedTool, searchConversationsTool] =
+      createTools(db, email.id, email.fromEmail);
 
     const loader = new DefaultResourceLoader({
       cwd: process.cwd(),
@@ -196,7 +225,7 @@ export async function runInboundAgent(): Promise<void> {
     const { session } = await createAgentSession({
       model,
       noTools: 'builtin',
-      customTools: [sendReplyTool, markProcessedTool],
+      customTools: [sendReplyTool, markProcessedTool, searchConversationsTool],
       resourceLoader: loader,
       sessionManager: SessionManager.inMemory(),
       settingsManager: SettingsManager.inMemory({ compaction: { enabled: false } }),
