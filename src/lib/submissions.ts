@@ -1,8 +1,5 @@
-import { appendFile, mkdir } from 'node:fs/promises';
-import { dirname } from 'node:path';
-
-// Where submissions are persisted. Override with SUBMISSIONS_DIR in production.
-const DIR = process.env.SUBMISSIONS_DIR || './submissions';
+import { getDb } from './db.js';
+import { env } from './env.js';
 
 export type Submission = Record<string, string> & {
   type: string;
@@ -10,11 +7,9 @@ export type Submission = Record<string, string> & {
 };
 
 /**
- * Persist a submission as a line of JSON (JSONL) and, if configured, forward it.
+ * Persist a submission to SQLite and, if configured, forward it to a webhook.
  *
- * Delivery options (all optional, set whichever you use in production):
- *   - SUBMISSIONS_DIR : directory for the JSONL files (default ./submissions)
- *   - SUBMISSIONS_WEBHOOK : URL to POST each submission to (Slack, Make, Zapier, your inbox-as-a-service, etc.)
+ *   SUBMISSIONS_WEBHOOK : URL to POST each submission to (Slack, Make, Zapier, etc.)
  */
 export async function saveSubmission(type: string, fields: Record<string, string>) {
   const record: Submission = {
@@ -23,11 +18,22 @@ export async function saveSubmission(type: string, fields: Record<string, string
     ...fields,
   };
 
-  const file = `${DIR}/${type}.jsonl`;
-  await mkdir(dirname(file), { recursive: true });
-  await appendFile(file, JSON.stringify(record) + '\n', 'utf8');
+  const db = getDb();
+  db.prepare(`
+    INSERT OR IGNORE INTO submissions (type, received_at, name, email, company, topic, budget, message)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `).run(
+    type,
+    record.receivedAt,
+    fields.name ?? null,
+    fields.email ?? null,
+    fields.company ?? null,
+    fields.topic ?? null,
+    fields.budget ?? null,
+    fields.message ?? null,
+  );
 
-  const webhook = process.env.SUBMISSIONS_WEBHOOK;
+  const webhook = env.SUBMISSIONS_WEBHOOK;
   if (webhook) {
     try {
       await fetch(webhook, {
