@@ -26,9 +26,9 @@ fi
 pkill -f "dist/server/entry.mjs" 2>/dev/null || true
 
 # Start the production server
-echo "[deploy] Starting production server on 0.0.0.0:4321..."
+echo "[deploy] Starting production server on 0.0.0.0:8000..."
 export HOST=0.0.0.0
-export PORT=4321
+export PORT=8000
 export NODE_ENV=production
 
 nohup node ./dist/server/entry.mjs > "$LOG_FILE" 2>&1 &
