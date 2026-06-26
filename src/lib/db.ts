@@ -42,6 +42,7 @@ export function getDb(): Database.Database {
       received_at    TEXT NOT NULL,
       from_email     TEXT NOT NULL,
       from_name      TEXT,
+      to_email       TEXT,
       subject        TEXT,
       body_text      TEXT,
       in_reply_to    TEXT,
@@ -55,5 +56,20 @@ export function getDb(): Database.Database {
       ON inbound_emails (processed_at)
       WHERE processed_at IS NULL;
   `);
+
+  // Migrate existing tables that predate the to_email column (safe to re-run)
+  try {
+    _db.exec('ALTER TABLE inbound_emails ADD COLUMN to_email TEXT');
+  } catch {
+    // column already exists — ignore
+  }
+
+  // Index on to_email — created after migration so it works on pre-existing DBs
+  try {
+    _db.exec('CREATE INDEX IF NOT EXISTS idx_inbound_to_email ON inbound_emails (to_email)');
+  } catch {
+    // column still missing somehow — ignore
+  }
+
   return _db;
 }

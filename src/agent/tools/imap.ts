@@ -8,6 +8,7 @@ export interface InboundEmail {
   messageId: string;
   fromEmail: string;
   fromName: string;
+  toEmail?: string;
   subject: string;
   bodyText: string;
   inReplyTo?: string;
@@ -41,8 +42,8 @@ export async function syncInbox(db: Database.Database): Promise<void> {
 
       const insert = db.prepare(`
         INSERT OR IGNORE INTO inbound_emails
-          (message_id, imap_uid, received_at, from_email, from_name, subject, body_text, in_reply_to, ref_chain)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+          (message_id, imap_uid, received_at, from_email, from_name, to_email, subject, body_text, in_reply_to, ref_chain)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `);
 
       const seenUids: number[] = [];
@@ -51,6 +52,7 @@ export async function syncInbox(db: Database.Database): Promise<void> {
         const parsed = await simpleParser(msg.source);
         const messageId = parsed.messageId ?? `uid-${msg.uid}@imap`;
         const fromAddr = parsed.from?.value?.[0];
+        const toAddr = parsed.to?.value?.[0];
         const refs = parsed.references;
 
         insert.run(
@@ -59,6 +61,7 @@ export async function syncInbox(db: Database.Database): Promise<void> {
           (parsed.date ?? new Date()).toISOString(),
           fromAddr?.address ?? '',
           fromAddr?.name ?? '',
+          toAddr?.address ?? null,
           parsed.subject ?? '(no subject)',
           parsed.text ?? '',
           parsed.inReplyTo ?? null,
@@ -79,27 +82,35 @@ export async function syncInbox(db: Database.Database): Promise<void> {
   }
 }
 
-/** Returns all rows in inbound_emails where processed_at IS NULL. */
-export function getPendingEmails(db: Database.Database): InboundEmail[] {
+/** Returns unprocessed rows, optionally filtered to a specific recipient. */
+export function getPendingEmails(db: Database.Database, toEmail?: string): InboundEmail[] {
   type Row = {
     id: number; message_id: string; from_email: string; from_name: string | null;
-    subject: string | null; body_text: string | null;
+    to_email: string | null; subject: string | null; body_text: string | null;
     in_reply_to: string | null; ref_chain: string | null; received_at: string;
   };
 
-  const rows = db.prepare(`
-    SELECT id, message_id, from_email, from_name, subject, body_text,
-           in_reply_to, ref_chain, received_at
-    FROM inbound_emails
-    WHERE processed_at IS NULL
-    ORDER BY received_at ASC
-  `).all() as Row[];
+  const sql = toEmail
+    ? `SELECT id, message_id, from_email, from_name, to_email, subject, body_text,
+              in_reply_to, ref_chain, received_at
+       FROM inbound_emails
+       WHERE processed_at IS NULL AND to_email = ?
+       ORDER BY received_at ASC`
+    : `SELECT id, message_id, from_email, from_name, to_email, subject, body_text,
+              in_reply_to, ref_chain, received_at
+       FROM inbound_emails
+       WHERE processed_at IS NULL
+       ORDER BY received_at ASC`;
+
+  const params = toEmail ? [toEmail] : [];
+  const rows = db.prepare(sql).all(...params) as Row[];
 
   return rows.map(r => ({
     id: r.id,
     messageId: r.message_id,
     fromEmail: r.from_email,
     fromName: r.from_name ?? '',
+    toEmail: r.to_email ?? undefined,
     subject: r.subject ?? '(no subject)',
     bodyText: r.body_text ?? '',
     inReplyTo: r.in_reply_to ?? undefined,

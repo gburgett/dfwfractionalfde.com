@@ -12,14 +12,16 @@ import {
   SettingsManager,
 } from "@earendil-works/pi-coding-agent";
 import { getDb } from '../lib/db.js';
-import { assertAgentEnv } from '../lib/env.js';
-import { syncInbox, getPendingEmails } from './tools/imap.js';
+import { assertAgentEnv, env } from '../lib/env.js';
+import { syncInbox, getPendingEmails, type InboundEmail } from './tools/imap.js';
 import { sendEmail } from './tools/email.js';
 import { site } from '../data/site.js';
 
 assertAgentEnv();
 
-const SYSTEM_PROMPT = `You are Daneel, an AI assistant to ${site.owner.name}. Gordon is a fractional Forward Deployed Engineer (FDE) based in Dallas–Fort Worth, TX who embeds with client companies to build and ship AI-native software. He takes on a maximum of ${site.maxClients} clients at a time and requires a minimum ${site.minEngagementMonths}-month engagement.
+/** Build a per-email system prompt with the full email context baked in. */
+function systemPromptForEmail(email: InboundEmail): string {
+  return `You are Daneel, an AI assistant to ${site.owner.name}. Gordon is a fractional Forward Deployed Engineer (FDE) based in Dallas–Fort Worth, TX who embeds with client companies to build and ship AI-native software. He takes on a maximum of ${site.maxClients} clients at a time and requires a minimum ${site.minEngagementMonths}-month engagement.
 
 You manage the r.daneel.olivaw@dfwfractionalfde.com inbox on Gordon's behalf. Be transparent that you are an AI — do not impersonate Gordon directly.
 
@@ -27,18 +29,30 @@ Website: ${site.url}
 Contact email: ${site.contactEmail}
 Current capacity: ${site.openClients > 0 ? `${site.openClients} open slot(s)` : 'Waitlist only — no open slots right now'}
 
+## Inbound email to handle
+
+You have one email to process. Here are the details:
+
+**From:** ${email.fromName} <${email.fromEmail}>
+**Subject:** ${email.subject}
+**Received:** ${email.receivedAt}
+**Message ID:** ${email.id}
+
+--- begin email body ---
+${email.bodyText}
+--- end email body ---
+
 ## Your workflow
 
-1. Call get_new_emails to fetch all unprocessed inbound emails.
-2. If there are none, say so and stop.
-3. For each email, categorize it as one of:
+1. Categorize this email as one of:
    - **genuine_inquiry**: A real person or business genuinely interested in hiring a fractional FDE, asking questions about Gordon's work, or following up on a prior conversation. When in doubt, lean toward genuine — err on the side of responding.
    - **solicitation**: Outbound sales pitch, recruiting email, vendor selling services (SEO, dev shops, offshore staffing, link-building, etc.).
    - **spam**: Gibberish, test messages, clearly automated bot submissions, phishing, or completely irrelevant content.
    - **other**: Doesn't fit above (e.g., job applications, partnership proposals, media inquiries, general questions about the field).
-4. For **genuine_inquiry** emails: compose a warm, personalized reply and call send_reply.
-5. Call mark_processed for every email, regardless of category.
-6. Process all emails before finishing.
+
+2. If the category is **genuine_inquiry**: compose a warm, personalized reply and call \`send_reply\`.
+
+3. **Always call \`mark_processed\`** — for every email, regardless of category. This records the outcome so we don't process it again.
 
 ## Reply guidelines
 
@@ -52,36 +66,15 @@ Current capacity: ${site.openClients > 0 ? `${site.openClients} open slot(s)` : 
 ## Tone
 
 Warm, professional, and direct. Mirror Gordon's style: conversational, technically curious, not over-explained. Be matter-of-fact about being an AI without making it the focus.`;
+}
 
-export async function runInboundAgent(): Promise<void> {
-  const db = getDb();
-
-  const getNewEmailsTool = defineTool({
-    name: 'get_new_emails',
-    label: 'Get New Emails',
-    description: 'Syncs the inbox from IMAP and returns all unprocessed inbound emails. Call this first.',
-    parameters: Type.Object({}),
-    execute: async () => {
-      try {
-        await syncInbox(db);
-        const pending = getPendingEmails(db);
-        console.log(`[inbound-agent] ${pending.length} pending email(s)`);
-        const result = pending.length > 0 ? pending : { message: 'No new emails.' };
-        return { content: [{ type: 'text' as const, text: JSON.stringify(result) }], details: {} };
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : String(err);
-        console.error('[inbound-agent] get_new_emails failed:', msg);
-        return { content: [{ type: 'text' as const, text: JSON.stringify({ error: msg }) }], details: {} };
-      }
-    },
-  });
-
+/** Create tools scoped to a specific email id. */
+function createTools(db: ReturnType<typeof getDb>, emailId: number) {
   const sendReplyTool = defineTool({
     name: 'send_reply',
     label: 'Send Reply',
     description: 'Sends a reply to a genuine inquiry. Threading headers are attached automatically.',
     parameters: Type.Object({
-      id: Type.Integer({ description: 'The id of the inbound email from get_new_emails' }),
       to_email: Type.String({ description: 'Recipient email address' }),
       to_name: Type.String({ description: 'Recipient name' }),
       subject: Type.String({ description: 'Reply subject (typically "Re: original subject")' }),
@@ -89,7 +82,7 @@ export async function runInboundAgent(): Promise<void> {
     }),
     execute: async (_toolCallId, params) => {
       try {
-        const { id: emailId, to_email, to_name, subject, body_text } = params;
+        const { to_email, to_name, subject, body_text } = params;
 
         type ThreadRow = { message_id: string; in_reply_to: string | null; ref_chain: string | null };
         const orig = db.prepare(
@@ -124,9 +117,8 @@ export async function runInboundAgent(): Promise<void> {
   const markProcessedTool = defineTool({
     name: 'mark_processed',
     label: 'Mark Processed',
-    description: 'Record the final outcome for an email. Must be called for every email, including spam and solicitations.',
+    description: 'Record the final outcome for this email. Must be called for every email, including spam and solicitations.',
     parameters: Type.Object({
-      id: Type.Integer({ description: 'The id of the inbound email' }),
       category: Type.Union(
         [
           Type.Literal('genuine_inquiry'),
@@ -141,7 +133,7 @@ export async function runInboundAgent(): Promise<void> {
     }),
     execute: async (_toolCallId, params) => {
       try {
-        const { id: emailId, category, category_notes, reply_sent } = params;
+        const { category, category_notes, reply_sent } = params;
         db.prepare(`
           UPDATE inbound_emails
           SET category = ?, category_notes = ?, reply_sent = ?, processed_at = ?
@@ -157,38 +149,92 @@ export async function runInboundAgent(): Promise<void> {
     },
   });
 
+  return [sendReplyTool, markProcessedTool] as const;
+}
+
+/** Returns true if the email's processed_at column is non-null. */
+function isProcessed(db: ReturnType<typeof getDb>, emailId: number): boolean {
+  const row = db.prepare('SELECT processed_at FROM inbound_emails WHERE id = ?').get(emailId) as
+    { processed_at: string | null } | undefined;
+  return row !== undefined && row.processed_at !== null;
+}
+
+export async function runInboundAgent(): Promise<void> {
+  const db = getDb();
+
+  // ── Harness: sync inbox and check for unprocessed emails ──────────────
+  console.log('[inbound-agent] Syncing inbox...');
+  await syncInbox(db);
+  const agentEmail = env.EASYMAIL_AGENT_EMAIL;
+  const pending = getPendingEmails(db, agentEmail);
+
+  if (pending.length === 0) {
+    console.log('[inbound-agent] No unprocessed emails. Nothing to do.');
+    return;
+  }
+
+  console.log(`[inbound-agent] ${pending.length} pending email(s)`);
+
   const model = getModel('fireworks', 'accounts/fireworks/models/deepseek-v4-pro');
   if (!model) throw new Error('DeepSeek v4 Pro model not found in pi model registry');
 
   const authStorage = AuthStorage.create();
   const modelRegistry = ModelRegistry.create(authStorage);
 
-  const loader = new DefaultResourceLoader({ cwd: process.cwd(), agentDir: getAgentDir(), systemPromptOverride: () => SYSTEM_PROMPT });
-  await loader.reload();
+  for (const email of pending) {
+    console.log(`[inbound-agent] Processing email id=${email.id} from ${email.fromEmail}...`);
 
-  const { session } = await createAgentSession({
-    model,
-    noTools: 'builtin',
-    customTools: [getNewEmailsTool, sendReplyTool, markProcessedTool],
-    resourceLoader: loader,
-    sessionManager: SessionManager.inMemory(),
-    settingsManager: SettingsManager.inMemory({ compaction: { enabled: false } }),
-    authStorage,
-    modelRegistry,
-  });
+    const [sendReplyTool, markProcessedTool] = createTools(db, email.id);
 
-  console.log('[inbound-agent] Starting run...');
+    const loader = new DefaultResourceLoader({
+      cwd: process.cwd(),
+      agentDir: getAgentDir(),
+      systemPromptOverride: () => systemPromptForEmail(email),
+    });
+    await loader.reload();
 
-  session.subscribe((event) => {
-    if (event.type === 'message_update' && event.assistantMessageEvent.type === 'text_delta') {
-      process.stdout.write(event.assistantMessageEvent.delta);
+    const { session } = await createAgentSession({
+      model,
+      noTools: 'builtin',
+      customTools: [sendReplyTool, markProcessedTool],
+      resourceLoader: loader,
+      sessionManager: SessionManager.inMemory(),
+      settingsManager: SettingsManager.inMemory({ compaction: { enabled: false } }),
+      authStorage,
+      modelRegistry,
+    });
+
+    session.subscribe((event) => {
+      if (event.type === 'message_update' && event.assistantMessageEvent.type === 'text_delta') {
+        process.stdout.write(event.assistantMessageEvent.delta);
+      }
+    });
+
+    // First pass — let the agent handle the email
+    await session.prompt(
+      'Please categorize this email and respond appropriately. Remember to call mark_processed when done.'
+    );
+    process.stdout.write('\n');
+
+    // Check if mark_processed was called. If not, nudge once.
+    if (!isProcessed(db, email.id)) {
+      console.log(`[inbound-agent] id=${email.id} not yet processed — nudging agent...`);
+      await session.prompt(
+        'This email has not been marked as processed yet. Please call mark_processed with the appropriate category and any notes.'
+      );
+      process.stdout.write('\n');
     }
-  });
 
-  await session.prompt('Please check the inbox and handle any new emails.');
-  process.stdout.write('\n');
+    if (isProcessed(db, email.id)) {
+      console.log(`[inbound-agent] ✓ id=${email.id} processed successfully.`);
+    } else {
+      console.warn(`[inbound-agent] ✗ id=${email.id} still not processed after nudge. Skipping.`);
+    }
+
+    session.dispose();
+  }
+
   console.log('[inbound-agent] Run complete.');
-  session.dispose();
 }
 
 // CLI entry point
