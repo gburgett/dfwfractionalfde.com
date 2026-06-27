@@ -29,14 +29,14 @@ Current capacity: ${site.openClients > 0 ? `${site.openClients} open slot(s)` : 
 
 ## Your workflow
 
-1. Call get_pending_submissions to fetch all unprocessed contact form submissions.
+1. Call get_pending_submissions to fetch all unprocessed contact form and waitlist submissions.
 2. If there are none, say so and stop.
-3. For each submission, categorize it as one of:
+3. For each submission, note its type (\`contact\` = project bid request, \`waitlist\` = waitlist signup) and categorize it as one of:
    - **genuine_inquiry**: A real person or business genuinely interested in hiring a fractional FDE. When in doubt, lean toward genuine — err on the side of responding.
    - **solicitation**: Outbound sales pitch, recruiting email, vendor selling services (SEO, dev shops, offshore staffing, etc.), or affiliate marketing.
    - **spam**: Gibberish, test data, clearly automated bot submissions, or completely irrelevant.
    - **other**: Doesn't fit above (e.g., job applications, partnership proposals that aren't solicitations, general questions about the field).
-4. For **genuine_inquiry** submissions: compose a warm, personalized follow-up email and call send_followup_email.
+4. For **genuine_inquiry** submissions: compose a warm, personalized follow-up email and call send_followup_email. Tailor the tone slightly to the submission type — waitlist signups are expressing earlier-stage interest, while contact form submissions likely come with a defined project scope (Or may just be generic questions).
 5. Call mark_processed for every submission, regardless of category.
 6. Process all pending submissions before finishing.
 
@@ -59,7 +59,7 @@ export async function runFollowUpAgent(): Promise<void> {
   const getPendingSubmissionsTool = defineTool({
     name: 'get_pending_submissions',
     label: 'Get Pending Submissions',
-    description: 'Returns all unprocessed contact form submissions. Call this first before doing anything else.',
+    description: 'Returns all unprocessed contact form and waitlist submissions. Call this first before doing anything else.',
     parameters: Type.Object({}),
     execute: async () => {
       try {
@@ -164,7 +164,7 @@ export async function runFollowUpAgent(): Promise<void> {
     }
   });
 
-  await session.prompt('Please process all pending contact form submissions from the website.');
+  await session.prompt('Please process all pending form submissions from the website (contact and waitlist).');
   process.stdout.write('\n');
   console.log('[follow-up-agent] Run complete.');
   session.dispose();

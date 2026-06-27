@@ -8,6 +8,10 @@ const schema = z.object({
   PORT:                z.string().default('4321'),
   SUBMISSIONS_WEBHOOK: z.string().optional(),
 
+  // Turnstile (CAPTCHA) — Cloudflare test keys work everywhere
+  TURNSTILE_SITE_KEY:   z.string().default('0x4AAAAAADrnBAPF3d9yn8Ga'),
+  TURNSTILE_SECRET_KEY: z.string().default('0x4AAAAAADrnBL0GjCTIQpbnsZfeqpNYoro'),
+
   // Agent
   EASYMAIL_EMAIL:       z.string().optional(),
   EASYMAIL_PASSWORD:    z.string().optional(),

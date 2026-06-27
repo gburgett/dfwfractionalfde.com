@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { site } from '../data/site';
+import { env } from '../lib/env';
 ---
 <Base title="Got a project in mind?" description="Bring a defined project and get a firm fixed-price bid from a senior DFW engineer — clear scope, milestones, and one price. Or ask about a maintenance plan.">
   <section class="section section--tight">
@@ -57,6 +58,11 @@ import { site } from '../data/site';
           <span class="hint">The more detail you share, the tighter the fixed price I can quote.</span>
         </div>
 
+        <div class="field" style="margin:16px 0">
+          <div id="turnstile-widget" data-sitekey={env.TURNSTILE_SITE_KEY}></div>
+          <input type="hidden" name="cf-turnstile-response" id="turnstile-response" />
+        </div>
+
         <button class="btn btn--primary" type="submit" style="width:100%">Request a bid →</button>
         <p class="muted" style="font-size:0.82rem;margin:14px 0 0">
           Looking for the ongoing subscription instead? <a class="textlink" href="/waitlist/">Join the waitlist →</a>
@@ -66,7 +72,22 @@ import { site } from '../data/site';
   </section>
 </Base>
 
+<script is:inline
+  src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad"
+  async defer
+></script>
+
 <script is:inline>
+  function onTurnstileLoad() {
+    const widget = document.getElementById('turnstile-widget');
+    turnstile.render(widget, {
+      sitekey: widget.dataset.sitekey,
+      callback: function(token) {
+        document.getElementById('turnstile-response').value = token;
+      },
+    });
+  }
+
   const params = new URLSearchParams(location.search);
   if (params.get('error')) document.getElementById('error').style.display = 'block';
   const topic = params.get('topic');

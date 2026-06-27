@@ -1,7 +1,8 @@
 import type Database from 'better-sqlite3';
 
-export interface ContactSubmission {
+export interface Submission {
   id: number;
+  type: string;
   name: string;
   email: string;
   company: string;
@@ -13,6 +14,7 @@ export interface ContactSubmission {
 
 type Row = {
   id: number;
+  type: string;
   name: string | null;
   email: string | null;
   company: string | null;
@@ -22,16 +24,17 @@ type Row = {
   received_at: string;
 };
 
-export function getPendingSubmissions(db: Database.Database): ContactSubmission[] {
+export function getPendingSubmissions(db: Database.Database): Submission[] {
   const rows = db.prepare(`
-    SELECT id, name, email, company, topic, budget, message, received_at
+    SELECT id, type, name, email, company, topic, budget, message, received_at
     FROM submissions
-    WHERE type = 'contact' AND processed_at IS NULL
+    WHERE processed_at IS NULL
     ORDER BY received_at ASC
   `).all() as Row[];
 
   return rows.map(r => ({
     id: r.id,
+    type: r.type,
     name: r.name ?? '',
     email: r.email ?? '',
     company: r.company ?? '',

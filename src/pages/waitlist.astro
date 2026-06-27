@@ -2,6 +2,7 @@
 import Base from '../layouts/Base.astro';
 import Availability from '../components/Availability.astro';
 import { site } from '../data/site';
+import { env } from '../lib/env';
 ---
 <Base title="Join the waitlist" description="Join the waitlist for a Fractional Forward Deployed Engineer in Dallas–Fort Worth. Currently full — get first notice when a slot opens.">
   <section class="section section--tight">
@@ -76,6 +77,11 @@ import { site } from '../data/site';
           <input id="source" name="source" />
         </div>
 
+        <div class="field" style="margin:16px 0">
+          <div id="turnstile-widget" data-sitekey={env.TURNSTILE_SITE_KEY}></div>
+          <input type="hidden" name="cf-turnstile-response" id="turnstile-response" />
+        </div>
+
         <button class="btn btn--primary" type="submit" style="width:100%">Join the waitlist →</button>
         <p class="muted" style="font-size:0.82rem;margin:14px 0 0">
           Prefer to talk about a one-off build instead? <a class="textlink" href="/contact/?topic=project">Request a fixed-price bid →</a>
@@ -85,7 +91,22 @@ import { site } from '../data/site';
   </section>
 </Base>
 
+<script is:inline
+  src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad"
+  async defer
+></script>
+
 <script is:inline>
+  function onTurnstileLoad() {
+    const widget = document.getElementById('turnstile-widget');
+    turnstile.render(widget, {
+      sitekey: widget.dataset.sitekey,
+      callback: function(token) {
+        document.getElementById('turnstile-response').value = token;
+      },
+    });
+  }
+
   if (new URLSearchParams(location.search).get('error')) {
     document.getElementById('error').style.display = 'block';
   }
