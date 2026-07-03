@@ -1,0 +1,217 @@
+---
+import { getDb } from '../../lib/db.js';
+
+export const prerender = false;
+
+const userEmail = Astro.request.headers.get('x-exedev-email');
+
+if (!userEmail) {
+  return Astro.redirect(`/__exe.dev/login?redirect=${encodeURIComponent('/admin/')}`, 302);
+}
+
+const ALLOWED_EMAILS = new Set(['gordon@gordonburgett.net']);
+
+if (!userEmail.endsWith('@dfwfractionalfde.com') && !ALLOWED_EMAILS.has(userEmail)) {
+  return new Response('403 Forbidden — only @dfwfractionalfde.com accounts may view this page.', {
+    status: 403,
+    headers: { 'content-type': 'text/plain; charset=utf-8' },
+  });
+}
+
+const db = getDb();
+
+type Submission = {
+  id: number; type: string; received_at: string; name: string | null;
+  email: string | null; company: string | null; topic: string | null;
+  budget: string | null; message: string | null; category: string | null;
+  category_notes: string | null; email_sent: number | null; processed_at: string | null;
+};
+
+type InboundEmail = {
+  id: number; received_at: string; from_email: string; from_name: string | null;
+  to_email: string | null; subject: string | null; body_text: string | null;
+  category: string | null; category_notes: string | null;
+  reply_sent: number; processed_at: string | null;
+};
+
+const submissions = db.prepare(`
+  SELECT id, type, received_at, name, email, company, topic, budget, message,
+         category, category_notes, email_sent, processed_at
+  FROM submissions
+  ORDER BY received_at DESC
+`).all() as Submission[];
+
+const inboundEmails = db.prepare(`
+  SELECT id, received_at, from_email, from_name, to_email, subject, body_text,
+         category, category_notes, reply_sent, processed_at
+  FROM inbound_emails
+  ORDER BY received_at DESC
+`).all() as InboundEmail[];
+
+function fmt(iso: string | null): string {
+  if (!iso) return '—';
+  const d = new Date(iso);
+  return d.toLocaleString('en-US', { timeZone: 'America/Chicago', month: 'short', day: 'numeric',
+    year: 'numeric', hour: 'numeric', minute: '2-digit' });
+}
+
+function badge(category: string | null, processed: string | null): string {
+  if (!processed) return '<span class="badge pending">pending</span>';
+  const c = category ?? 'processed';
+  const cls = c === 'genuine_inquiry' ? 'genuine' : c === 'spam' ? 'spam' : c === 'solicitation' ? 'solic' : 'other';
+  return `<span class="badge ${cls}">${c.replace('_', ' ')}</span>`;
+}
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin · DFW Fractional FDE</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: #0f0f0f; color: #e0e0e0;
+      font-size: 14px; line-height: 1.5; }
+    header { padding: 16px 24px; border-bottom: 1px solid #222;
+      display: flex; align-items: center; justify-content: space-between; }
+    header h1 { font-size: 16px; font-weight: 600; color: #fff; }
+    header span { color: #666; font-size: 13px; }
+    main { padding: 24px; max-width: 1400px; margin: 0 auto; }
+    h2 { font-size: 15px; font-weight: 600; color: #fff; margin: 32px 0 12px; }
+    h2:first-child { margin-top: 0; }
+    .count { color: #666; font-weight: 400; margin-left: 6px; }
+    table { width: 100%; border-collapse: collapse; background: #161616;
+      border: 1px solid #222; border-radius: 6px; overflow: hidden; }
+    th { text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .05em; color: #666;
+      border-bottom: 1px solid #222; white-space: nowrap; }
+    td { padding: 8px 12px; border-bottom: 1px solid #1a1a1a; vertical-align: top;
+      max-width: 320px; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: #1c1c1c; }
+    .wrap { white-space: pre-wrap; word-break: break-word; }
+    .mono { font-family: monospace; font-size: 12px; color: #aaa; }
+    .muted { color: #555; }
+    .badge { display: inline-block; padding: 2px 7px; border-radius: 3px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+    .badge.pending  { background: #1a1a2e; color: #6699ff; }
+    .badge.genuine  { background: #0d2b1a; color: #4ade80; }
+    .badge.spam     { background: #2b0d0d; color: #f87171; }
+    .badge.solic    { background: #2b1a0d; color: #fb923c; }
+    .badge.other    { background: #1a1a1a; color: #a0a0a0; }
+    .tag { display: inline-block; padding: 1px 6px; border-radius: 3px;
+      font-size: 11px; background: #1e1e1e; color: #888; border: 1px solid #2a2a2a; }
+    details summary { cursor: pointer; color: #4e9fff; font-size: 12px; }
+    details summary:hover { color: #7ab8ff; }
+    details[open] summary { margin-bottom: 6px; }
+    .empty { color: #444; font-style: italic; padding: 20px 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Admin</h1>
+    <span>{userEmail}</span>
+  </header>
+  <main>
+
+    <h2>Contact &amp; Waitlist Submissions <span class="count">({submissions.length})</span></h2>
+    {submissions.length === 0 ? (
+      <p class="empty">No submissions yet.</p>
+    ) : (
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Received (CT)</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Company</th>
+            <th>Topic / Budget</th>
+            <th>Message</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {submissions.map(s => (
+            <tr>
+              <td class="mono">{s.id}</td>
+              <td class="mono" style="white-space:nowrap">{fmt(s.received_at)}</td>
+              <td><span class="tag">{s.type}</span></td>
+              <td set:html={badge(s.category, s.processed_at)} />
+              <td>{s.name ?? <span class="muted">—</span>}</td>
+              <td class="mono">{s.email ?? <span class="muted">—</span>}</td>
+              <td>{s.company ?? <span class="muted">—</span>}</td>
+              <td>
+                {s.topic && <div>{s.topic}</div>}
+                {s.budget && <div class="muted">{s.budget}</div>}
+              </td>
+              <td style="max-width:300px">
+                {s.message ? (
+                  <details>
+                    <summary>{s.message.slice(0, 60)}{s.message.length > 60 ? '…' : ''}</summary>
+                    <div class="wrap mono">{s.message}</div>
+                  </details>
+                ) : <span class="muted">—</span>}
+              </td>
+              <td style="max-width:200px">
+                {s.category_notes ? <span class="wrap">{s.category_notes}</span> : <span class="muted">—</span>}
+                {s.email_sent ? <div><span class="badge genuine" style="margin-top:4px">email sent</span></div> : null}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+
+    <h2>Inbound Emails <span class="count">({inboundEmails.length})</span></h2>
+    {inboundEmails.length === 0 ? (
+      <p class="empty">No inbound emails yet.</p>
+    ) : (
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Received (CT)</th>
+            <th>Status</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Subject</th>
+            <th>Body</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {inboundEmails.map(e => (
+            <tr>
+              <td class="mono">{e.id}</td>
+              <td class="mono" style="white-space:nowrap">{fmt(e.received_at)}</td>
+              <td set:html={badge(e.category, e.processed_at)} />
+              <td>
+                <div class="mono">{e.from_email}</div>
+                {e.from_name && <div class="muted" style="font-size:12px">{e.from_name}</div>}
+              </td>
+              <td class="mono" style="font-size:12px">{e.to_email ?? <span class="muted">—</span>}</td>
+              <td style="max-width:200px">{e.subject ?? <span class="muted">—</span>}</td>
+              <td style="max-width:300px">
+                {e.body_text ? (
+                  <details>
+                    <summary>{e.body_text.slice(0, 60)}{e.body_text.length > 60 ? '…' : ''}</summary>
+                    <div class="wrap mono">{e.body_text}</div>
+                  </details>
+                ) : <span class="muted">—</span>}
+              </td>
+              <td style="max-width:200px">
+                {e.category_notes ? <span class="wrap">{e.category_notes}</span> : <span class="muted">—</span>}
+                {e.reply_sent ? <div><span class="badge genuine" style="margin-top:4px">reply sent</span></div> : null}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    )}
+
+  </main>
+</body>
+</html>

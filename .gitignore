@@ -16,4 +16,6 @@ server.pid
 server.log
 .server.pid
 
+logs/
+server.log
 data

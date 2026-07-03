@@ -56,6 +56,13 @@ Warm, professional, and direct. Mirror Gordon's style: conversational, technical
 export async function runFollowUpAgent(): Promise<void> {
   const db = getDb();
 
+  const precheck = getPendingSubmissions(db);
+  if (precheck.length === 0) {
+    console.log('[follow-up-agent] No pending submissions. Nothing to do.');
+    return;
+  }
+  console.log(`[follow-up-agent] ${precheck.length} pending submission(s) — starting agent.`);
+
   const getPendingSubmissionsTool = defineTool({
     name: 'get_pending_submissions',
     label: 'Get Pending Submissions',
