@@ -1,6 +1,6 @@
 ---
 title: "Building an Unstructured Data Import"
-description: "Case study: knowing when to apply AI and when not to — a pragmatic look at building a data import pipeline for community resources."
+description: "Case study: knowing when to apply AI and when not to. A pragmatic look at building a data import pipeline for community resources."
 date: 2024-11-16
 client: "Neighbor Solutions"
 ---

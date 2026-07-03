@@ -1,6 +1,6 @@
 ---
 title: "Building Alice, an Empowering AI Agent"
-description: "Case study: building an AI agent that actually empowers people instead of just augmenting them — built for HealthShare Technology Solutions."
+description: "Case study: building an AI agent that actually empowers people instead of just augmenting them, built for HealthShare Technology Solutions."
 date: 2026-03-18
 client: "HealthShare Technology Solutions"
 ---
@@ -16,7 +16,7 @@ The guiding principles I used in building Alice come down to four key words:
 
 ## 1. Build a Specialist, Not a Generalist
 
-Just like you have an accountant do your taxes and a realtor help you find a home, I believe specialist AI agents will become essential tools for specific parts of your life. I decided early on I'm not going to out-compete Anthropic, OpenAI, or OpenClaw. Instead, I wanted to leverage the deep domain expertise of our service to guide the agent's decision making. Follow the unix philosophy — do one thing and do it well!
+Just like you have an accountant do your taxes and a realtor help you find a home, I believe specialist AI agents will become essential tools for specific parts of your life. I decided early on I'm not going to out-compete Anthropic, OpenAI, or OpenClaw. Instead, I wanted to leverage the deep domain expertise of our service to guide the agent's decision making. Follow the unix philosophy: do one thing and do it well!
 
 Alice's specialization cuts down on the number of scenarios I need to test. No need for fine tuning, I can get away with a few simple evals testing common scenarios. I can refine her prompts without worrying about a prompt explosion, or overloading the context.
 
@@ -46,7 +46,7 @@ protected function listTodosToolDef(): array
 }
 ```
 
-The toolset I created for Alice leverages those rules. Whenever Alice modifies the user's data — like marking an expense as submitted, or importing an itemized bill from a provider — the ruleset re-runs and gives Alice a diff of what checklist items changed.
+The toolset I created for Alice leverages those rules. Whenever Alice modifies the user's data (marking an expense as submitted, importing an itemized bill from a provider, etc.) the ruleset re-runs and gives Alice a diff of what checklist items changed.
 
 For example, when Alice helps a user obtain substantiation for medical bills, the ruleset might tell her:
 
@@ -134,7 +134,7 @@ When talking to a provider, Alice gets read-only database access scoped to only 
 
 Alice has different tool sets available depending on the context. When processing external emails, she doesn't have tools that can modify user data or access sensitive information. She can only read from the specific incident and compose responses.
 
-The comment above already shows the toolset comparison — user mode gets full CRUD data access and user-specific tools like `list_todos`, while provider mode gets read-only access and a limited toolset without user-specific features.
+The comment above already shows the toolset comparison: user mode gets full CRUD data access and user-specific tools like `list_todos`, while provider mode gets read-only access and a limited toolset without user-specific features.
 
 ### Reminder System
 
@@ -215,7 +215,7 @@ Email is brilliant for this use case because:
 - The interaction model is familiar (you send a message, you get a reply)
 - No app to download, no new interface to learn
 
-The email interface also has a nice property for AI agents: it's naturally asynchronous. When Alice needs to do something that takes time — like waiting for a provider to respond, or processing a large batch of documents — she can just take her time and email you back when she's done.
+The email interface also has a nice property for AI agents: it's naturally asynchronous. When Alice needs to do something that takes time (waiting for a provider to respond, processing a large batch of documents) she can just take her time and email you back when she's done.
 
 When you fire off an email to Alice, it feels like you're delegating work to a trusted advisor. Fire and forget!
 
@@ -228,11 +228,11 @@ When you fire off an email to Alice, it feels like you're delegating work to a t
   </div>
 </div>
 
-In this example, Alice proactively reached out to a provider to request an itemized bill, and the provider responded via email. Alice processes the response and updates the user — all within the same conversation thread.
+In this example, Alice proactively reached out to a provider to request an itemized bill, and the provider responded via email. Alice processes the response and updates the user, all within the same conversation thread.
 
 ## Putting It All Together
 
-These four principles — specialization, deterministic grounding, proactive action, and meeting users where they are — work together to create an AI agent that actually empowers people. Alice doesn't just answer questions about healthcare paperwork. She does the paperwork. She handles the follow-ups. She keeps track of deadlines. She operates in the user's existing workflow via email. And she's deeply specialized in this one problem domain, with deterministic rules keeping her grounded in reality.
+These four principles work together to create an AI agent that actually empowers people: specialization, deterministic grounding, proactive action, and meeting users where they are. Alice doesn't just answer questions about healthcare paperwork. She does the paperwork, handles the follow-ups, and keeps track of deadlines, all inside the user's existing email workflow. And because she's deeply specialized with deterministic rules keeping her grounded, she doesn't hallucinate the next step.
 
 The result is users who actually feel relieved when they delegate work to Alice. Real work is getting done without them having to think about it.
 
