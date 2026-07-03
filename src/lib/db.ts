@@ -78,6 +78,30 @@ export function getDb(): Database.Database {
       email_id INTEGER PRIMARY KEY,
       embedding FLOAT[${EMBEDDING_DIMS}]
     );
+
+    -- Case studies, synced from src/content/caseStudies/ at build time
+    CREATE TABLE IF NOT EXISTS case_studies (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      slug        TEXT NOT NULL UNIQUE,
+      title       TEXT NOT NULL,
+      description TEXT NOT NULL,
+      client      TEXT,
+      url         TEXT NOT NULL,
+      content     TEXT NOT NULL,
+      updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS case_study_embeddings (
+      id            INTEGER PRIMARY KEY AUTOINCREMENT,
+      case_study_id INTEGER NOT NULL UNIQUE REFERENCES case_studies(id) ON DELETE CASCADE,
+      embedding     BLOB NOT NULL,
+      updated_at    TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE VIRTUAL TABLE IF NOT EXISTS vec_case_study_embeddings USING vec0(
+      case_study_id INTEGER PRIMARY KEY,
+      embedding FLOAT[${EMBEDDING_DIMS}]
+    );
   `);
 
   // ── Migrations for pre-existing tables (safe to re-run) ────────────

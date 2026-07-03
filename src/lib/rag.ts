@@ -99,3 +99,112 @@ export async function searchConversations(
 
   return results;
 }
+
+export interface CaseStudySource {
+  slug: string;
+  title: string;
+  description: string;
+  client: string | null;
+  url: string;
+  content: string;
+}
+
+export interface CaseStudyResult {
+  slug: string;
+  title: string;
+  description: string;
+  client: string | null;
+  url: string;
+  distance: number;
+}
+
+/**
+ * Upsert a case study and its embedding, keyed by slug.
+ * Called from the case-study sync build step (scripts/sync-case-studies.ts).
+ */
+export async function upsertCaseStudy(
+  db: Database.Database,
+  study: CaseStudySource,
+): Promise<void> {
+  const { slug, title, description, client, url, content } = study;
+
+  db.prepare(`
+    INSERT INTO case_studies (slug, title, description, client, url, content, updated_at)
+    VALUES (@slug, @title, @description, @client, @url, @content, datetime('now'))
+    ON CONFLICT(slug) DO UPDATE SET
+      title = excluded.title,
+      description = excluded.description,
+      client = excluded.client,
+      url = excluded.url,
+      content = excluded.content,
+      updated_at = excluded.updated_at
+  `).run({ slug, title, description, client, url, content });
+
+  const row = db.prepare('SELECT id FROM case_studies WHERE slug = ?').get(slug) as { id: number };
+
+  const text = `Title: ${title}\nClient: ${client ?? 'n/a'}\nDescription: ${description}\n\n${content}`;
+  const vec = await generateEmbedding(text);
+  const blob = vectorToBlob(vec);
+  const hex = hexBlob(vec);
+
+  db.prepare(`
+    INSERT OR REPLACE INTO case_study_embeddings (case_study_id, embedding, updated_at)
+    VALUES (?, ?, datetime('now'))
+  `).run(row.id, blob);
+
+  // vec0 virtual tables don't honor INSERT OR REPLACE (throws a unique constraint
+  // error instead) — delete any existing row for this case study first.
+  db.exec(`DELETE FROM vec_case_study_embeddings WHERE case_study_id = ${row.id}`);
+  db.exec(`INSERT INTO vec_case_study_embeddings (case_study_id, embedding) VALUES (${row.id}, ${hex})`);
+}
+
+/**
+ * Remove case studies (and their embeddings, via ON DELETE CASCADE) whose slug
+ * is no longer present in `keepSlugs` — keeps the DB in sync when a case study
+ * markdown file is deleted or renamed.
+ */
+export function pruneCaseStudies(db: Database.Database, keepSlugs: string[]): number {
+  if (keepSlugs.length === 0) {
+    const result = db.prepare('DELETE FROM case_studies').run();
+    return result.changes;
+  }
+  const placeholders = keepSlugs.map(() => '?').join(', ');
+  const result = db.prepare(`DELETE FROM case_studies WHERE slug NOT IN (${placeholders})`).run(...keepSlugs);
+  return result.changes;
+}
+
+/**
+ * Search case studies for projects similar to `query` — used by Daneel to
+ * find and reference relevant past work when following up on warm leads.
+ */
+export async function searchCaseStudies(
+  db: Database.Database,
+  query: string,
+  limit: number = 3,
+): Promise<CaseStudyResult[]> {
+  const queryVec = await generateEmbedding(query);
+  const queryHex = hexBlob(queryVec);
+
+  type Row = {
+    slug: string; distance: number; title: string;
+    description: string; client: string | null; url: string;
+  };
+
+  const rows = db.prepare(`
+    SELECT c.slug, v.distance, c.title, c.description, c.client, c.url
+    FROM vec_case_study_embeddings v
+    INNER JOIN case_studies c ON c.id = v.case_study_id
+    WHERE v.embedding MATCH ${queryHex}
+      AND k = ?
+    ORDER BY v.distance ASC
+  `).all(limit) as Row[];
+
+  return rows.map(r => ({
+    slug: r.slug,
+    title: r.title,
+    description: r.description,
+    client: r.client,
+    url: r.url,
+    distance: r.distance,
+  }));
+}

@@ -15,6 +15,7 @@ import { getDb } from '../lib/db.js';
 import { assertAgentEnv } from '../lib/env.js';
 import { getPendingSubmissions } from './tools/submissions.js';
 import { sendEmail } from './tools/email.js';
+import { createSearchCaseStudiesTool } from './tools/case-studies.js';
 import { site } from '../data/site.js';
 
 assertAgentEnv();
@@ -36,14 +37,16 @@ Current capacity: ${site.openClients > 0 ? `${site.openClients} open slot(s)` : 
    - **solicitation**: Outbound sales pitch, recruiting email, vendor selling services (SEO, dev shops, offshore staffing, etc.), or affiliate marketing.
    - **spam**: Gibberish, test data, clearly automated bot submissions, or completely irrelevant.
    - **other**: Doesn't fit above (e.g., job applications, partnership proposals that aren't solicitations, general questions about the field).
-4. For **genuine_inquiry** submissions: compose a warm, personalized follow-up email and call send_followup_email. Tailor the tone slightly to the submission type — waitlist signups are expressing earlier-stage interest, while contact form submissions likely come with a defined project scope (Or may just be generic questions).
-5. Call mark_processed for every submission, regardless of category.
-6. Process all pending submissions before finishing.
+4. For **genuine_inquiry** submissions: before writing the email, call search_case_studies with a description of their project or problem to check whether Gordon has done similar work before. If you find a relevant case study, mention it briefly and include its link — a concrete example builds far more trust than generic reassurance. Don't force it if nothing is genuinely relevant.
+5. Compose a warm, personalized follow-up email and call send_followup_email. Tailor the tone slightly to the submission type — waitlist signups are expressing earlier-stage interest, while contact form submissions likely come with a defined project scope (Or may just be generic questions).
+6. Call mark_processed for every submission, regardless of category.
+7. Process all pending submissions before finishing.
 
 ## Follow-up email guidelines
 
 - Open with a brief, natural introduction: you're Daneel, Gordon's AI assistant, reaching out on his behalf.
 - Warm and personal, not templated-sounding. Reference specifics from their message.
+- If search_case_studies turned up a relevant example, weave it in naturally with its link — e.g. "Gordon built something similar for [client] — [link]" — rather than bolting it on as an afterthought.
 - Keep it brief: 3–5 short paragraphs.
 - ${site.openClients === 0 ? "Gordon's calendar is currently full. Acknowledge the waitlist situation honestly, set realistic expectations, and ask a question to understand their timeline and what they're trying to build — this keeps the conversation warm." : "Express genuine interest on Gordon's behalf and suggest a 30-min call for them to connect directly."}
 - End with a clear, specific next step.
@@ -143,6 +146,8 @@ export async function runFollowUpAgent(): Promise<void> {
     },
   });
 
+  const searchCaseStudiesTool = createSearchCaseStudiesTool(db);
+
   const model = getModel('fireworks', 'accounts/fireworks/models/deepseek-v4-pro');
   if (!model) throw new Error('DeepSeek v4 Pro model not found in pi model registry');
 
@@ -155,7 +160,7 @@ export async function runFollowUpAgent(): Promise<void> {
   const { session } = await createAgentSession({
     model,
     noTools: 'builtin',
-    customTools: [getPendingSubmissionsTool, sendFollowupEmailTool, markProcessedTool],
+    customTools: [getPendingSubmissionsTool, sendFollowupEmailTool, markProcessedTool, searchCaseStudiesTool],
     resourceLoader: loader,
     sessionManager: SessionManager.inMemory(),
     settingsManager: SettingsManager.inMemory({ compaction: { enabled: false } }),
