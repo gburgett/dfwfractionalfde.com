@@ -15,6 +15,7 @@ import { getDb } from '../lib/db.js';
 import { assertAgentEnv, env } from '../lib/env.js';
 import { syncInbox, getPendingEmails, type InboundEmail } from './tools/imap.js';
 import { sendEmail } from './tools/email.js';
+import { getSubmissionsForEmail } from './tools/submissions.js';
 import { createSearchCaseStudiesTool } from './tools/case-studies.js';
 import { site } from '../data/site.js';
 import { ensureEmbedding, searchConversations } from '../lib/rag.js';
@@ -54,7 +55,7 @@ ${email.bodyText}
 
 2. Before categorizing, optionally call \`search_conversations\` to look up past exchanges with this sender — useful for context if they've reached out before or you've replied before.
 
-3. If the category is **genuine_inquiry**: compose a warm, personalized reply and call \`send_reply\`. See "Citing relevant case studies for warm leads" below before writing it.
+3. If the category is **genuine_inquiry**: compose a warm, personalized reply and call \`send_reply\`. See "Citing relevant case studies for warm leads" and "Never guess at someone's waitlist/contact status" below before writing it.
 
 4. **Always call \`mark_processed\`** — for every email, regardless of category. This records the outcome so we don't process it again.
 
@@ -70,10 +71,15 @@ If a sender is responding to a prior follow-up and clearly expresses interest in
 
 When you're following up on a warm lead — someone who has already expressed interest, is replying to a prior follow-up, or is asking questions about what Gordon can do — call \`search_case_studies\` with a description of their project or problem. If a genuinely relevant case study turns up, mention it briefly in your reply with its link, so they see concrete proof of similar work. Don't force it if nothing is truly relevant; a bad example is worse than no example.
 
+## Never guess at someone's waitlist/contact status
+
+Before telling someone they're on the waitlist, or inviting them to join the waitlist or fill out the contact form, call \`check_prior_submissions\` first. This reply may be part of a thread that started from a form they already submitted — you have no visibility into that from the email body alone. If a prior submission is on file, acknowledge it (e.g. "you're already on the waitlist as of [date]") instead of asking them to submit again or implying they haven't yet.
+
 ## Reply guidelines
 
 - Open with a brief, natural introduction as Daneel — Gordon's AI assistant — unless the sender clearly already knows who you are from prior exchange.
 - Warm and personal, not templated-sounding. Reference specifics from their message, **any relevant past conversations** you found via search_conversations, and **any relevant case study** you found via search_case_studies.
+- Never invite someone to join the waitlist or fill out the contact form without first checking check_prior_submissions — they may have already done so.
 - Keep it brief: 3–5 short paragraphs.
 - ${site.openClients === 0 ? "Gordon's calendar is currently full. Acknowledge the waitlist situation honestly, set realistic expectations, and ask a question to understand their timeline and what they're trying to build — this keeps the conversation warm." : "Express genuine interest on Gordon's behalf and suggest a 30-min call for them to connect directly."}
 - End with a clear, specific next step.
@@ -241,7 +247,26 @@ function createTools(db: ReturnType<typeof getDb>, emailId: number, fromEmail: s
 
   const searchCaseStudiesTool = createSearchCaseStudiesTool(db);
 
-  return [sendReplyTool, markProcessedTool, searchConversationsTool, createOpportunityTool, searchCaseStudiesTool] as const;
+  const checkPriorSubmissionsTool = defineTool({
+    name: 'check_prior_submissions',
+    label: 'Check Prior Submissions',
+    description: 'Checks whether this sender has any waitlist or contact form submissions already on file. Call this before telling someone they\'re on the waitlist, or before inviting them to join it / fill out the form — avoids contradicting or asking them to redo something they\'ve already done.',
+    parameters: Type.Object({}),
+    execute: async () => {
+      try {
+        const results = getSubmissionsForEmail(db, fromEmail);
+        console.log(`[inbound-agent] check_prior_submissions(${fromEmail}) → ${results.length} result(s)`);
+        const result = results.length > 0 ? results : { message: 'No prior waitlist or contact form submissions on file for this email.' };
+        return { content: [{ type: 'text' as const, text: JSON.stringify(result) }], details: {} };
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        console.error('[inbound-agent] check_prior_submissions failed:', msg);
+        return { content: [{ type: 'text' as const, text: JSON.stringify({ error: msg }) }], details: {} };
+      }
+    },
+  });
+
+  return [sendReplyTool, markProcessedTool, searchConversationsTool, createOpportunityTool, searchCaseStudiesTool, checkPriorSubmissionsTool] as const;
 }
 
 /** Returns true if the email's processed_at column is non-null. */
@@ -280,7 +305,7 @@ export async function runInboundAgent(): Promise<void> {
     // Generate embedding for this email so future RAG searches can find it
     await ensureEmbedding(db, email.id, email.subject, email.bodyText);
 
-    const [sendReplyTool, markProcessedTool, searchConversationsTool, createOpportunityTool, searchCaseStudiesTool] =
+    const [sendReplyTool, markProcessedTool, searchConversationsTool, createOpportunityTool, searchCaseStudiesTool, checkPriorSubmissionsTool] =
       createTools(db, email.id, email.fromEmail);
 
     const loader = new DefaultResourceLoader({
@@ -293,7 +318,7 @@ export async function runInboundAgent(): Promise<void> {
     const { session } = await createAgentSession({
       model,
       noTools: 'builtin',
-      customTools: [sendReplyTool, markProcessedTool, searchConversationsTool, createOpportunityTool, searchCaseStudiesTool],
+      customTools: [sendReplyTool, markProcessedTool, searchConversationsTool, createOpportunityTool, searchCaseStudiesTool, checkPriorSubmissionsTool],
       resourceLoader: loader,
       sessionManager: SessionManager.inMemory(),
       settingsManager: SettingsManager.inMemory({ compaction: { enabled: false } }),
