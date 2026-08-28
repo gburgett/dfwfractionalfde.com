@@ -109,15 +109,15 @@ const focus = [
   .about-head { display: grid; grid-template-columns: 1.4fr 0.9fr; gap: 48px; align-items: center; }
   .role { color: var(--text); font-weight: 600; margin: 0; }
   .role--alt { color: var(--muted); font-weight: 500; margin-bottom: 0; }
-  .portrait img { width: 100%; max-width: 320px; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow); }
+  .portrait img { width: 100%; max-width: 320px; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: var(--shadow-lg); }
   .cta-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 26px; }
   .split { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: start; }
   .textlink { color: var(--brand); font-weight: 600; }
   .stack-row { display: grid; grid-template-columns: 96px 1fr; gap: 14px; padding: 12px 0; border-top: 1px solid var(--border-soft); }
   .stack-row:first-of-type { border-top: none; }
-  .stack-k { font-family: var(--mono); font-size: 0.8rem; color: var(--muted-2); text-transform: uppercase; letter-spacing: 0.06em; padding-top: 4px; }
+  .stack-k { font-family: var(--font); font-size: 0.76rem; font-weight: 600; color: var(--muted-2); text-transform: uppercase; letter-spacing: 0.1em; padding-top: 4px; }
   .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip { font-size: 0.85rem; padding: 5px 11px; border: 1px solid var(--border); border-radius: 999px; color: var(--text); background: var(--bg-soft); }
+  .chip { font-size: 0.85rem; padding: 5px 11px; border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); background: var(--band); }
   @media (max-width: 880px) {
     .about-head { grid-template-columns: 1fr; gap: 28px; }
     .portrait { order: -1; }

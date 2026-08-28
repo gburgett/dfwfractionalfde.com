@@ -1,6 +1,5 @@
 ---
 import Base from '../layouts/Base.astro';
-import Availability from '../components/Availability.astro';
 import PostCard from '../components/PostCard.astro';
 import { site } from '../data/site';
 import { caseStudies } from '../data/posts';
@@ -10,90 +9,90 @@ const featured = caseStudies;
 <Base>
   <!-- Hero -->
   <section class="hero">
-    <div class="container">
-      <Availability />
-      <p class="eyebrow" style="margin-top:22px">AI-Native · Fractional · On-site</p>
-      <h1>
-        An AI-native software engineer, <span class="grad">forward deployed</span> into your business.
-      </h1>
-      <p class="lead">
-        I embed in your business, learn your operational reality, and ship production-grade AI and
-        software. No vendor agenda, no demos that never deploy. This is the last mile of
-        AI transformation, and I build it for you.
-      </p>
-      <div class="cta-row">
-        <a class="btn btn--primary" href="/waitlist/">Join the waitlist →</a>
-        <a class="btn btn--ghost" href="/how-it-works/">See how it works</a>
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow eyebrow--accent hero-kicker">{site.region} · Fractional · On-site</p>
+        <h1>An AI-native software engineer, forward deployed into your business.</h1>
+        <p class="lead">
+          You want to integrate AI into your business.  Your team may already be using it to speed up their own workflows.
+          But you feel like you're missing the best that AI has to offer: transformative capabilities executing in a governed, auditable environment.
+        </p>
+        <p class="lead">
+          I embed in your business, learn how you actually operate, and build that unifying AI layer for your team.
+          No vendor agenda, no demos that never deploy. 
+          Just the last mile of AI transformation that has to be built, not pitched.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn--primary" href="/waitlist/">Join the waitlist →</a>
+          <a class="btn btn--ghost" href="#fixed-price">Buy a fixed-price package →</a>
+        </div>
       </div>
-      <div class="hero-meta">
-        <div><strong>6&nbsp;mo</strong><span>minimum engagement</span></div>
-        <div><strong>Flat Rate</strong><span>no suprise bills</span></div>
-        <div><strong>On-site</strong><span>across the Metroplex</span></div>
-        <div><strong>Vendor-agnostic</strong><span>no locked-in agenda</span></div>
+
+      <div class="math-card">
+        <span class="math-label">The math</span>
+        <div class="math-rows">
+          <div class="math-row"><span>Full-time senior AI engineer</span><strong>$300K+</strong><span>fully loaded</span></div>
+          <div class="math-row"><span>Vendor ecosystem lock-in</span><strong>Indefinite</strong></div>
+          <div class="math-row"><span>Hourly consulting</span><strong>Unbounded</strong></div>
+          <div class="math-row math-row--accent"><span>Fractional FDE</span><strong>One flat monthly rate</strong></div>
+        </div>
+        <p class="math-note">No hourly rates. I work on your problem until it's done.</p>
       </div>
+    </div>
+  </section>
+
+  <!-- Stat rail -->
+  <section class="stat-rail">
+    <div class="container stat-grid">
+      <div class="stat"><div class="stat-n">6 mo</div><div class="stat-l">minimum engagement</div></div>
+      <div class="stat"><div class="stat-n">Flat rate</div><div class="stat-l">no surprise bills</div></div>
+      <div class="stat"><div class="stat-n">On-site</div><div class="stat-l">across the Metroplex</div></div>
+      <div class="stat"><div class="stat-n">Direct</div><div class="stat-l">no 3rd-party agenda</div></div>
     </div>
   </section>
 
   <!-- What is an FDE -->
-  <section class="section">
-    <div class="container">
-      <div class="split">
-        <div>
-          <p class="eyebrow">What is a Fractional FDE?</p>
-          <h2>Big-tech embeds an engineer with their most important customers. Now you can have one too: technology-agnostic, independent, and on-site in DFW.</h2>
-        </div>
-        <div>
-          <p>
-            A <strong>Forward Deployed Engineer</strong> doesn't hand you a proposal and disappear.
-            They practice <strong>business immersion</strong>: embed in your environment, learn how you
-            actually operate, and build the production-grade AI and software you need, sitting right
-            alongside your team.
-          </p>
-          <p>
-            <strong>Fractional</strong> means you get that senior, AI-native capability without a
-            $300K+ full-time hire or commitment to a single vendor's ecosystem.
-            One flat monthly subscription, no hourly rates. We work on your problem until it's done.
-          </p>
+  <section class="section section--band">
+    <div class="container fde">
+      <p class="eyebrow eyebrow--accent fde-eyebrow">What is a Fractional FDE?</p>
+      <div class="fde-body">
+        <h2 class="serif-head">Big tech embeds an engineer with its most important customers. Now you can have one too.</h2>
+        <p>
+          A <strong>Forward Deployed Engineer</strong> practices business immersion: 
+          embed in your environment, learn how you actually operate, and build the production-grade AI you need alongside your team.
+        </p>
+        <p>
+          There's just one problem: Big tech's FDEs are working to get you locked into their stack.<br/>
+          I work for you directly: doing what is best for your team and standing by my work with a flat-rate maintenance program.
           <a class="textlink" href="/about/">Meet your engineer →</a>
-        </div>
+        </p>
       </div>
+      <!-- <figure class="fde-figure">
+        <img src="/highlight.jpg" alt="Working on-site, embedded with a client's team" loading="lazy" width="1200" height="900" />
+        <figcaption>On-site with a client team · {site.region}</figcaption>
+      </figure> -->
     </div>
   </section>
 
-  <!-- Capabilities -->
-  <section class="section section--tight">
-    <div class="container">
-      <p class="eyebrow center" style="justify-content:center">Core capabilities</p>
-      <h2 class="center" style="margin-bottom:8px">What I build, embedded with you</h2>
-      <p class="center muted" style="max-width:60ch;margin:0 auto 40px">
-        Fifteen-plus years of software engineering, led AI workflow transformation
-        in aerospace, now working inside your business.
-      </p>
-      <div class="grid grid--3">
-        <div class="card cap">
-          <h3>AI Agents &amp; AI-Native Engineering</h3>
-          <p>LLM integration, <strong>AI Agents that reason through multi-step workflows and execute autonomously</strong>, and AI Governance built into real products, not demos. I ship production-grade AI that does work, safely and in production.</p>
-          <p></p>
-            <ul>
-              <p><a class="textlink" href="/case-studies/building-alice/">Alice, a HIPAA-compliant user-facing concierge agent.</a></p>
-              <p>ServPro's new After-Hours Front Desk voice agent</p>
-            </ul>
-        </p>
-        </div>
-        <div class="card cap">
-          <h3>Software Factories</h3>
+  <!-- Meet your engineer -->
+  <section class="section section--band">
+    <div class="container split">
+      <div>
+        <p class="eyebrow eyebrow--accent">Meet your engineer</p>
+        <a class="textlink" href={site.owner.personalSite} target="_blank" rel="noopener">gordonburgett.net ↗</a>
+      </div>
+      <div class="engineer">
+        <img class="engineer-photo" src={site.owner.headshot} alt="Gordon Burgett" loading="lazy" width="240" height="300" />
+        <div class="engineer-body">
+          <h2 class="serif-head">You're not hiring a firm. You're hiring me.</h2>
           <p>
-            Modern software teams are increasingly able to delegate more and more complex tasks to agents to own end-to-end.
-            But shipping more software also means more bugs, unless you invest in your processes.
-            I help engineering teams leverage Software Factories to increase velocity without increasing rework rates.
+            I'm Gordon Burgett - fifteen-plus years building production software, and
+            leading AI workflow transformation in aerospace. Mobile apps, cloud services, and AI
+            agents for companies that needed them to actually work beyond the demo.
           </p>
-        </div>
-        <div class="card cap">
-          <h3>Compliance & Governance</h3>
           <p>
-            I led a Software Engineering team through agentic transformation at a defense contractor, and built a HIPAA compliant AI agent for a SaaS company.
-            I know what it takes to build agents that operate within a compliance framework.
-            Agent governance is a result of effective engineering, not a prompt.
+            I run this practice solo, on purpose. The person you meet in discovery is the person
+            in your standups six months later - writing the code and answering the phone.
           </p>
         </div>
       </div>
@@ -101,51 +100,147 @@ const featured = caseStudies;
   </section>
 
   <!-- How it works -->
-  <section class="section">
-    <div class="container">
-      <p class="eyebrow">The engagement</p>
-      <div class="grid grid--2 steps">
-        <div class="step">
-          <span class="step-n">01</span>
-          <div>
-            <h3>Discovery & on-site kickoff</h3>
+  <section class="engagement">
+    <div class="container split">
+      <div>
+        <p class="engagement-eyebrow">The engagement</p>
+        <a class="engagement-link" href="/pricing/">See pricing →</a>
+      </div>
+      <div>
+        <h2 class="engagement-head">A subscription, not a project quote</h2>
+        <div class="steps">
+          <div class="step">
+            <span class="step-n">01</span>
+            <h3>Discovery &amp; on-site kickoff</h3>
             <p>
-              3 days in your office, anywhere in the Metroplex. I learn your business, your data, and your highest-leverage opportunities.
-              You get a roadmap with timelines and integration plans.
+              3 days on site in person, anywhere in the Metroplex.
+              I learn your business, map your data flows, and identify your highest-leverage opportunities.
+              You get a roadmap and timelines for implementation.
             </p>
           </div>
-        </div>
-        <div class="step">
-          <span class="step-n">02</span>
-          <div>
-            <h3>Embed & build</h3>
-            <p>I deploy forward into your team on a flat monthly subscription, shipping production-grade software and AI continuously, prioritized with you regularly.</p>
+          <div class="step">
+            <span class="step-n">02</span>
+            <h3>Embed &amp; build</h3>
+            <p>
+              A flat monthly subscription, shipping production-grade AI continuously, prioritized with you each week.
+            </p>
           </div>
-        </div>
-        <div class="step">
-          <span class="step-n">03</span>
-          <div>
-            <h3>Ship & compound</h3>
-            <p>Working software in production, fast. A minimum six-month engagement gives us room to compound real outcomes.</p>
+          <div class="step">
+            <span class="step-n">03</span>
+            <h3>Ship &amp; compound</h3>
+            <p>
+              Working software in production, fast. Six months gives us room to compound real outcomes and see the success.
+            </p>
           </div>
-        </div>
-        <div class="step">
-          <span class="step-n">04</span>
-          <div>
+          <div class="step">
+            <span class="step-n">04</span>
             <h3>Transition to maintenance</h3>
-            <p>When the heavy build is done, step down to a light maintenance plan to keep everything healthy, or keep going!</p>
+            <p>When the heavy build is done, step down to a light maintenance plan — or keep going.</p>
           </div>
         </div>
       </div>
-      <div class="cta-row" style="margin-top:36px">
-        <a class="btn btn--primary" href="/pricing/">See pricing →</a>
-        <a class="btn btn--ghost" href="/how-it-works/">Full breakdown</a>
+    </div>
+  </section>
+
+  <!-- Fixed price -->
+  <section class="fixed" id="fixed-price">
+    <div class="container fixed-head">
+      <div class="fixed-head-copy">
+        <p class="eyebrow eyebrow--accent">Fixed price</p>
+        <h2 class="serif-head mt-0">Small, scoped, priced up front.</h2>
+        <p class="fixed-intro">
+          No retainer required. Good first steps if you'd rather see the work before you
+          see a subscription.
+        </p>
+      </div>
+      <span class="fixed-scroll-hint">Scroll for more →</span>
+    </div>
+    <div class="container">
+      <div class="fixed-rail">
+        <article class="svc-card">
+          <div class="svc-media">
+            <img src="/data-flow-diagram.webp" alt="Annotated diagram of data moving between business systems" loading="lazy" />
+          </div>
+          <div class="svc-body">
+            <div class="svc-head">
+              <h3>Map your business processes</h3>
+              <div class="svc-price"><span class="amt">$4,750</span><span class="term">fixed · 3 days onsite</span></div>
+            </div>
+            <p class="svc-blurb">
+              I sit with your team and find where AI could really help.
+              You get a report with specific opportunities and actionable solutions.
+            </p>
+            <ul class="svc-list">
+              <li>Annotated flow map of your business processes</li>
+              <li>Ranked list of automation candidates</li>
+              <li>Written walkthrough with your team</li>
+              <li>3rd party solutions identified</li>
+            </ul>
+            <a class="textlink svc-cta" href="/contact/?topic=project">Book this →</a>
+          </div>
+        </article>
+
+        <article class="svc-card">
+          <div class="svc-media">
+            <img src="/cloudflare-os-card-2.png" alt="Cloudflare OS analytics dashboard" loading="lazy" />
+          </div>
+          <div class="svc-body">
+            <div class="svc-head">
+              <h3>Install &amp; configure Cloudflare OS</h3>
+              <div class="svc-price"><span class="amt">3,950</span><span class="term">fixed · 1 week</span></div>
+            </div>
+            <p class="svc-blurb">
+              The new AI-native business operating system.  Cloudflare OS enables your entire team to build tools and integrations,
+              automate processes, and collaborate on skills.  I deploy it into your Cloudflare tenant and configure governance rules,
+              audit trails, and spend limits.
+            </p>
+            <ul class="svc-list">
+              <li>Provisioned and access-scoped for your org</li>
+              <li>Connected to your data sources</li>
+              <li>2 working dashboards or reports pulled from your data</li>
+              <li>Up to 2 custom Gatekeepers or Gadgets</li>
+              <li>Source code lives in your repositories</li>
+            </ul>
+            <a class="textlink svc-cta" href="/contact/?topic=project">Book this →</a>
+          </div>
+        </article>
+
+        <article class="svc-card">
+          <div class="svc-media">
+            <img src="/cloudflare-os-card-2.png" alt="Cloudflare OS analytics dashboard" loading="lazy" />
+          </div>
+          <div class="svc-body">
+            <div class="svc-head">
+              <h3>AI Phone Receptionist</h3>
+              <div class="svc-price"><span class="amt">9,250</span><span class="term">fixed · 2-4 weeks</span></div>
+            </div>
+            <p class="svc-blurb">
+              Genuinely helpful AI inbound voice receptionist handling first-layer or after-hours support.
+              Routes inbound calls better than an IVR tree, handles simple message-taking tasks, and escalates to human support.
+              <br/>
+              <br/>
+              <a href="/case-studies/servpro-voice-agent">See how I built this for ServPro →</a>
+            </p>
+            <ul class="svc-list">
+              <li>3 months of follow-up fine tuning on real recorded conversations</li>
+              <li>Connected to your system of record</li>
+              <li>You own the voice provider account and source code</li>
+            </ul>
+            <a class="textlink svc-cta" href="/contact/?topic=project">Book this →</a>
+          </div>
+        </article>
+
+        <article class="svc-card svc-card--more">
+          <p class="eyebrow eyebrow--accent">Got a project in mind?</p>
+          <p>Custom bids available for anything not on this list</p>
+          <a class="textlink" href="/contact/?topic=project">Get in touch →</a>
+        </article>
       </div>
     </div>
   </section>
 
   <!-- Insights / syndicated -->
-  <section class="section section--tight">
+  <section class="section">
     <div class="container">
       <div class="row-head">
         <div>
@@ -154,71 +249,162 @@ const featured = caseStudies;
         </div>
         <a class="textlink" href="/insights/">All writing →</a>
       </div>
-      <div class="grid grid--3" style="margin-top:28px">
+      <div class="grid grid--2" style="margin-top:28px">
         {featured.map((post) => <PostCard post={post} />)}
       </div>
     </div>
   </section>
 
   <!-- CTA -->
-  <section class="section">
-    <div class="container">
-      <div class="cta-panel">
-        <p class="eyebrow center" style="justify-content:center">Currently full</p>
-        <h2 class="center mt-0">Join the waitlist</h2>
-        <p class="center muted" style="max-width:54ch;margin:14px auto 26px">
+  <section class="waitlist-cta">
+    <div class="container waitlist-inner">
+      <div>
+        <p class="engagement-eyebrow">Currently full</p>
+        <h2 class="engagement-head">Join the waitlist</h2>
+        <p class="waitlist-lead">
           I keep the practice small to keep the work deep and the relationship real.
           Get on the waitlist and you'll be first to hear when a slot opens.
         </p>
-        <div class="cta-row" style="justify-content:center">
-          <a class="btn btn--primary" href="/waitlist/">Join the waitlist →</a>
-          <a class="btn btn--ghost" href="/contact/">Got a project in mind?</a>
-        </div>
+      </div>
+      <div class="waitlist-actions">
+        <a class="btn btn--waitlist" href="/waitlist/">Join the waitlist →</a>
+        <a class="engagement-link" href="/contact/?topic=project">Got a project in mind?</a>
       </div>
     </div>
   </section>
 </Base>
 
 <style>
-  .hero { padding: 70px 0 30px; }
-  .hero h1 { margin: 14px 0 18px; max-width: 16ch; }
-  .grad { background: linear-gradient(120deg, var(--brand), var(--brand-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 28px; }
-  .hero-meta {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px;
-    margin-top: 48px; padding-top: 30px; border-top: 1px solid var(--border-soft);
-  }
-  .hero-meta strong { display: block; font-size: 1.5rem; color: var(--text); }
-  .hero-meta span { color: var(--muted-2); font-size: 0.88rem; }
+  .hero { padding: 56px 0 40px; }
+  .hero-grid { display: grid; grid-template-columns: 1.25fr 0.85fr; gap: 60px; align-items: start; }
+  .hero-kicker { margin-bottom: 14px; }
+  .hero-copy h1 { margin: 0 0 22px; max-width: 16ch; }
+  .cta-row { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 8px; }
 
-  .split { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
-  .textlink { color: var(--brand); font-weight: 600; }
+  .math-card {
+    background: var(--panel); border: 1px solid var(--border); border-left: 3px solid var(--brand);
+    padding: 26px 26px 24px; display: flex; flex-direction: column; gap: 16px;
+    box-shadow: var(--shadow-lg);
+  }
+  .math-label { font-family: var(--font); font-size: 0.68rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-2); }
+  .math-rows { display: flex; flex-direction: column; }
+  .math-row { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 13px 0; border-bottom: 1px solid var(--border-soft); font-size: 0.92rem; color: var(--muted); }
+  .math-row strong { font-size: 1.04rem; font-weight: 600; white-space: nowrap; color: var(--text); }
+  .math-row--accent { border-bottom: none; color: var(--brand); font-weight: 600; }
+  .math-row--accent strong { color: var(--brand); }
+  .math-note { margin: 0; font-family: var(--font-serif); font-style: italic; font-size: 0.94rem; color: var(--muted-2); }
+
+  .stat-rail { border-top: 2px solid var(--text); border-bottom: 1px solid var(--border-soft); }
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); padding: 0; }
+  .stat { padding: 22px 24px; border-right: 1px solid var(--border-soft); }
+  .stat:last-child { border-right: none; }
+  .stat-n { font-size: 1.7rem; font-weight: 600; letter-spacing: -0.02em; }
+  .stat-l { font-family: var(--font); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-2); padding-top: 6px; }
+
+  .split { display: grid; grid-template-columns: 260px 1fr; gap: 52px; align-items: start; }
+  .serif-head { font-family: var(--font-serif); font-weight: 400; font-size: 2rem; line-height: 1.24; letter-spacing: 0; max-width: 22ch; }
+  .textlink { color: var(--brand); font-weight: 600; font-family: var(--font); }
   .textlink:hover { text-decoration: underline; }
 
-  .cap h3 { margin-bottom: 10px; }
-  .ticks { list-style: none; padding: 0; margin: 16px 0 0; }
-  .ticks li { position: relative; padding-left: 26px; margin-bottom: 9px; color: var(--muted); font-size: 0.94rem; }
-  .ticks li::before {
-    content: '✓'; position: absolute; left: 0; top: 0;
-    color: var(--brand); font-weight: 700;
+  /* What is a Fractional FDE — label | prose | photo */
+  .fde { display: grid; grid-template-columns: 200px 1fr 440px; gap: 52px; align-items: start; }
+  .fde-eyebrow { margin: 0; }
+  .fde-body { display: flex; flex-direction: column; gap: 18px; max-width: 62ch; }
+  .fde-body .serif-head { margin: 0; max-width: 34ch; }
+  .fde-body p { margin: 0; font-size: 1.02rem; }
+  .fde-figure { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .fde-figure img {
+    width: 100%; aspect-ratio: 4 / 3; object-fit: cover;
+    border: 1px solid var(--border); box-shadow: var(--shadow-lg);
+  }
+  .fde-figure figcaption {
+    font-family: var(--font); font-size: 0.68rem; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--muted-2);
   }
 
-  .steps { gap: 20px; }
-  .step { display: flex; gap: 18px; padding: 24px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-soft); }
-  .step-n { font-family: var(--mono); font-size: 0.95rem; font-weight: 600; color: var(--brand); }
-  .step h3 { margin-bottom: 6px; }
-  .step p { margin: 0; font-size: 0.95rem; }
+  /* Fixed-price scroll rail */
+  .fixed { padding: 76px 0; background: var(--band); border-top: 1px solid var(--border-soft); }
+  .fixed-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; }
+  .fixed-head-copy { max-width: 620px; display: flex; flex-direction: column; gap: 10px; }
+  .fixed-intro { margin: 0; font-family: var(--font-serif); font-size: 1rem; color: var(--muted); }
+  .fixed-scroll-hint { flex: none; font-family: var(--font); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-2); }
+  .fixed-rail {
+    display: flex; gap: 26px; align-items: stretch;
+    margin-top: 28px; padding-bottom: 10px;
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+  .svc-card {
+    flex: 0 0 420px; scroll-snap-align: start;
+    display: flex; flex-direction: column;
+    background: var(--panel); border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+  .svc-media { height: 190px; background: var(--navy); overflow: hidden; }
+  .svc-media img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
+  .svc-body { padding: 26px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
+  .svc-head { display: flex; flex-direction: column; gap: 8px; }
+  .svc-head h3 { margin: 0; font-size: 1.35rem; letter-spacing: -0.02em; }
+  .svc-price { display: flex; align-items: baseline; gap: 10px; }
+  .svc-price .amt { font-family: var(--mono); font-size: 1.5rem; font-weight: 500; color: var(--brand); }
+  .svc-price .term { font-family: var(--font); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-2); }
+  .svc-blurb { margin: 0; font-family: var(--font-serif); font-size: 0.98rem; line-height: 1.6; color: var(--muted); }
+  .svc-list { list-style: none; margin: 0; padding: 12px 0 0; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 9px; }
+  .svc-list li { position: relative; padding-left: 24px; font-size: 0.9rem; line-height: 1.55; color: var(--muted); }
+  .svc-list li::before { content: '→'; position: absolute; left: 0; color: var(--brand); }
+  .svc-cta { margin-top: auto; }
+  .svc-card--more {
+    flex-basis: 320px; justify-content: center; gap: 12px; padding: 34px;
+    background: transparent; border: 1px dashed var(--border); box-shadow: none;
+  }
+  .svc-card--more p { margin: 0; font-family: var(--font-serif); font-size: 1.02rem; line-height: 1.5; color: var(--muted-2); }
+  .svc-card--more .eyebrow { margin: 0; }
+
+  .engineer { display: grid; grid-template-columns: 200px 1fr; gap: 40px; align-items: start; }
+  .engineer-photo { width: 100%; max-width: 200px; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border: 1px solid var(--border); box-shadow: var(--shadow-lg); }
+  .engineer-body p { font-size: 1.02rem; }
+
+  /* Fixed navy bands — same regardless of site theme */
+  .engagement, .waitlist-cta { background: var(--navy); color: var(--on-navy-text); }
+  .engagement { padding: 72px 0; }
+  .engagement-eyebrow {
+    font-family: var(--font); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--on-navy-accent); margin: 0 0 14px;
+  }
+  .engagement-link { font-size: 0.92rem; font-weight: 600; color: var(--on-navy-accent); text-decoration: underline; font-family: var(--font); }
+  .engagement-head { color: var(--on-navy-text); margin-bottom: 26px; }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--on-navy-border); }
+  .step { padding: 24px; border-right: 1px solid var(--on-navy-border); }
+  .step:last-child { border-right: none; }
+  .step-n { display: block; font-family: var(--font); font-size: 0.72rem; font-weight: 700; color: var(--on-navy-accent); margin-bottom: 8px; }
+  .step h3 { color: var(--on-navy-text); font-size: 1.02rem; margin-bottom: 8px; }
+  .step p { color: var(--on-navy-muted); font-size: 0.9rem; margin: 0; font-family: var(--font-serif); }
 
   .row-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; }
 
-  .cta-panel {
-    background: linear-gradient(160deg, var(--panel-2), var(--bg-soft));
-    border: 1px solid var(--border); border-radius: 22px; padding: 56px 32px;
-    box-shadow: var(--shadow);
-  }
+  .waitlist-cta { padding: 60px 0; }
+  .waitlist-inner { display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; flex-wrap: wrap; }
+  .waitlist-lead { max-width: 52ch; font-size: 1.02rem; color: var(--on-navy-muted); margin: 0; }
+  .waitlist-actions { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .btn--waitlist { background: var(--on-navy-accent); color: #201502; box-shadow: 0 8px 22px -10px rgba(211, 168, 104, 0.5); }
 
   @media (max-width: 880px) {
+    .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+    .stat-grid { grid-template-columns: 1fr 1fr; }
+    .stat:nth-child(2) { border-right: none; }
+    .stat:nth-child(odd) { border-right: 1px solid var(--border-soft); }
+    .stat:nth-child(n+3) { border-top: 1px solid var(--border-soft); }
     .split { grid-template-columns: 1fr; gap: 22px; }
-    .hero-meta { grid-template-columns: 1fr 1fr; }
+    .fde { grid-template-columns: 1fr; gap: 24px; }
+    .fde-figure { order: 2; }
+    .engineer { grid-template-columns: 1fr; }
+    .engineer-photo { max-width: 160px; }
+    .steps { grid-template-columns: 1fr; }
+    .step { border-right: none; border-bottom: 1px solid var(--on-navy-border); }
+    .step:last-child { border-bottom: none; }
+    .row-head { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .fixed-head { flex-direction: column; align-items: flex-start; gap: 14px; }
+    .svc-card { flex-basis: 82%; }
+    .svc-card--more { flex-basis: 70%; }
   }
 </style>

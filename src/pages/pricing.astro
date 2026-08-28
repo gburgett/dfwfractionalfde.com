@@ -128,23 +128,26 @@ import { site } from '../data/site';
   .pricing { display: grid; grid-template-columns: 1fr 1.18fr 1fr; gap: 22px; align-items: stretch; }
   .plan {
     display: flex; flex-direction: column;
-    border: 1px solid var(--border); border-radius: 20px; padding: 30px 26px;
-    background: linear-gradient(180deg, var(--panel), var(--bg-soft));
+    border: 1px solid var(--border); border-radius: var(--radius); padding: 30px 26px;
+    background: var(--panel); box-shadow: var(--shadow);
     position: relative;
   }
   .plan--minimal, .plan--project { margin-top: 18px; }
   .plan--featured {
-    border-color: rgba(54, 214, 195, 0.55);
-    background: linear-gradient(170deg, var(--panel-2), var(--bg-soft));
-    box-shadow: 0 30px 60px -30px rgba(54, 214, 195, 0.45);
+    border-color: var(--brand);
+    background: var(--navy); color: var(--on-navy-text);
+    box-shadow: var(--shadow-lg);
   }
+  .plan--featured .plan-sub, .plan--featured .plan-list li { color: var(--on-navy-muted); }
+  .plan--featured .plan-foot, .plan--featured .plan-fine, .plan--featured .per { color: var(--on-navy-muted); }
   .ribbon {
     position: absolute; top: -13px; left: 50%; transform: translateX(-50%);
-    background: linear-gradient(120deg, var(--brand), var(--brand-2)); color: #07101f;
-    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
-    font-weight: 700; padding: 6px 14px; border-radius: 999px; white-space: nowrap;
+    background: var(--on-navy-accent); color: #201502;
+    font-family: var(--font); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+    font-weight: 700; padding: 6px 14px; white-space: nowrap;
   }
-  .plan-kind { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--brand); font-family: var(--mono); }
+  .plan-kind { font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.14em; color: var(--brand); font-family: var(--font); font-weight: 600; }
+  .plan--featured .plan-kind { color: var(--on-navy-accent); }
   .plan-price { display: flex; align-items: baseline; gap: 8px; margin: 14px 0 6px; }
   .amt { font-size: 2.6rem; font-weight: 700; letter-spacing: -0.03em; }
   .per { color: var(--muted-2); font-size: 0.95rem; }
@@ -152,6 +155,8 @@ import { site } from '../data/site';
   .plan-list { list-style: none; padding: 0; margin: 18px 0 22px; flex: 1; }
   .plan-list li { position: relative; padding-left: 26px; margin-bottom: 11px; font-size: 0.94rem; color: var(--muted); }
   .plan-list li::before { content: '✓'; position: absolute; left: 0; color: var(--brand); font-weight: 700; }
+  .plan--featured .plan-list li::before { color: var(--on-navy-accent); }
+  .plan--featured .btn--primary { background: var(--on-navy-accent); color: #201502; box-shadow: 0 8px 22px -10px rgba(211, 168, 104, 0.5); }
   .plan-list .muted-li { color: var(--muted-2); }
   .plan-list .muted-li::before { content: '→'; color: var(--accent); }
   .plan-btn { width: 100%; }
@@ -161,10 +166,10 @@ import { site } from '../data/site';
 
   .narrow { max-width: 760px; }
   .faq details {
-    border: 1px solid var(--border); border-radius: 12px; padding: 4px 20px; margin-bottom: 12px;
-    background: var(--bg-soft);
+    border: 1px solid var(--border); border-radius: var(--radius); padding: 4px 20px; margin-bottom: 12px;
+    background: var(--band);
   }
-  .faq summary { cursor: pointer; font-weight: 600; padding: 14px 0; list-style: none; }
+  .faq summary { cursor: pointer; font-weight: 600; padding: 14px 0; list-style: none; font-family: var(--font); }
   .faq summary::-webkit-details-marker { display: none; }
   .faq summary::after { content: '+'; float: right; color: var(--brand); font-size: 1.2rem; }
   .faq details[open] summary::after { content: '–'; }

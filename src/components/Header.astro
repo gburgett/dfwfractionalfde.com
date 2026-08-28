@@ -1,6 +1,7 @@
 ---
 import { nav, site } from '../data/site';
 const path = Astro.url.pathname;
+const full = site.openClients <= 0;
 ---
 <header class="site-header">
   <div class="container bar">
@@ -14,69 +15,117 @@ const path = Astro.url.pathname;
 
     <input type="checkbox" id="navToggle" class="nav-toggle" hidden />
     <label for="navToggle" class="nav-burger" aria-label="Toggle navigation">
-      <span></span><span></span><span></span>
+      <span></span><span></span>
     </label>
 
     <nav class="nav">
-      {nav.map((item) => (
-        <a
-          href={item.href}
-          class={`nav-link ${path === item.href ? 'is-active' : ''} ${
-            item.href === '/waitlist/' ? 'nav-link--cta' : ''
-          }`}
-        >
+      {nav.filter((item) => item.href !== '/waitlist/').map((item) => (
+        <a href={item.href} class={`nav-link ${path === item.href ? 'is-active' : ''}`}>
           {item.label}
         </a>
       ))}
+      <button type="button" class="theme-toggle" aria-label="Toggle color theme">
+        <span class="icon-moon" aria-hidden="true">☾</span>
+        <span class="icon-sun" aria-hidden="true">☀</span>
+      </button>
+      <a href="/waitlist/" class="nav-cta">Join the waitlist</a>
     </nav>
   </div>
+
+  <div class={`status-band ${full ? 'is-full' : 'is-open'}`}>
+    <div class="container status-inner">
+      <span class="dot"></span>
+      {full ? (
+        <span class="status-label">Currently full · waitlist open</span>
+      ) : (
+        <span class="status-label">Accepting new engagements now</span>
+      )}
+      <span class="status-rule"></span>
+      <span class="status-region">{site.region} · Fractional · On-site</span>
+    </div>
+  </div>
 </header>
+
+<script is:inline>
+  (function () {
+    var btns = document.querySelectorAll('.theme-toggle');
+    btns.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var root = document.documentElement;
+        var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+        root.setAttribute('data-theme', next);
+        try { localStorage.setItem('theme', next); } catch (e) {}
+      });
+    });
+  })();
+</script>
 
 <style>
   .site-header {
     position: sticky;
     top: 0;
     z-index: 50;
-    backdrop-filter: blur(12px);
-    background: rgba(11, 16, 32, 0.72);
+    background: var(--page);
     border-bottom: 1px solid var(--border-soft);
   }
-  .bar { display: flex; align-items: center; justify-content: space-between; height: 70px; }
-  .brand { display: inline-flex; align-items: center; gap: 12px; }
+  .bar { display: flex; align-items: center; justify-content: space-between; height: 70px; position: relative; }
+  .brand { display: inline-flex; align-items: center; gap: 11px; }
   .brand-mark {
-    font-family: var(--mono);
+    font-family: var(--font);
     font-weight: 700;
-    font-size: 0.82rem;
-    letter-spacing: 0.06em;
-    color: #07101f;
-    background: linear-gradient(120deg, var(--brand), var(--brand-2));
-    padding: 8px 10px;
-    border-radius: 9px;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    color: var(--page);
+    background: var(--text);
+    padding: 6px 7px;
   }
   .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
-  .brand-text strong { font-size: 0.98rem; }
-  .brand-text small { color: var(--muted); font-size: 0.74rem; letter-spacing: 0.02em; }
+  .brand-text strong { font-size: 1rem; font-weight: 600; letter-spacing: -0.015em; }
+  .brand-text small { color: var(--muted-2); font-size: 0.7rem; letter-spacing: 0.05em; text-transform: uppercase; display: none; }
 
-  .nav { display: flex; align-items: center; gap: 6px; }
-  .nav-link {
-    font-size: 0.92rem;
-    color: var(--muted);
-    padding: 8px 12px;
-    border-radius: 8px;
-    transition: color 0.15s ease, background 0.15s ease;
-  }
+  .nav { display: flex; align-items: center; gap: 26px; font-size: 0.92rem; }
+  .nav-link { color: var(--muted); transition: color 0.15s ease; }
   .nav-link:hover { color: var(--text); }
-  .nav-link.is-active { color: var(--text); }
-  .nav-link--cta {
-    color: #07101f;
-    background: linear-gradient(120deg, var(--brand), var(--brand-2));
-    font-weight: 600;
+  .nav-link.is-active { color: var(--text); font-weight: 600; }
+
+  .theme-toggle {
+    width: 32px; height: 32px; border-radius: 50%;
+    border: 1px solid var(--border); background: transparent;
+    display: inline-flex; align-items: center; justify-content: center;
+    cursor: pointer; color: var(--muted-2); font-size: 14px; padding: 0;
   }
-  .nav-link--cta:hover { color: #07101f; opacity: 0.92; }
+  .theme-toggle:hover { border-color: var(--brand); }
+  .icon-sun { display: none; }
+  :root[data-theme="dark"] .icon-moon { display: none; }
+  :root[data-theme="dark"] .icon-sun { display: inline; color: var(--brand); }
+
+  .nav-cta {
+    background: var(--cta-bg); color: var(--cta-text);
+    padding: 11px 18px; font-size: 0.9rem; font-weight: 600;
+    border-radius: var(--radius);
+  }
+  .nav-cta:hover { opacity: 0.9; }
 
   .nav-toggle, .nav-burger { display: none; }
 
+  .status-band {
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--band);
+  }
+  .status-inner {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 24px; font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.13em; text-transform: uppercase;
+  }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex: none; background: var(--brand); }
+  .status-label { color: var(--brand); }
+  .is-open .dot { background: var(--muted-2); }
+  .is-open .status-label { color: var(--muted-2); }
+  .status-rule { flex: 1; height: 1px; background: var(--border-soft); }
+  .status-region { color: var(--muted-2); font-weight: 500; }
+
   @media (max-width: 880px) {
+    .brand-text small { display: none; }
     .nav-burger {
       display: inline-flex;
       flex-direction: column;
@@ -84,7 +133,7 @@ const path = Astro.url.pathname;
       cursor: pointer;
       padding: 8px;
     }
-    .nav-burger span { width: 22px; height: 2px; background: var(--text); border-radius: 2px; }
+    .nav-burger span { width: 20px; height: 2px; background: var(--text); }
     .nav {
       position: absolute;
       top: 70px; left: 0; right: 0;
@@ -92,11 +141,15 @@ const path = Astro.url.pathname;
       align-items: stretch;
       gap: 2px;
       padding: 14px 24px 22px;
-      background: var(--bg-soft);
+      background: var(--page);
       border-bottom: 1px solid var(--border);
       display: none;
     }
     .nav-toggle:checked ~ .nav { display: flex; }
     .nav-link { padding: 12px 10px; }
+    .theme-toggle { align-self: flex-start; margin: 6px 10px; }
+    .nav-cta { text-align: center; margin: 6px 10px 0; }
+    .status-region { display: none; }
+    .status-rule { display: none; }
   }
 </style>

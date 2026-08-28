@@ -33,9 +33,20 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
     />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap"
       rel="stylesheet"
     />
+    <script is:inline>
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var theme = stored === 'light' || stored === 'dark'
+            ? stored
+            : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -49,10 +60,10 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
         position: absolute;
         left: -9999px;
         top: 0;
-        background: var(--brand);
-        color: #07101f;
+        background: var(--cta-bg);
+        color: var(--cta-text);
         padding: 10px 16px;
-        border-radius: 0 0 8px 0;
+        border-radius: 0 0 6px 0;
         z-index: 100;
       }
       .skip:focus { left: 0; }

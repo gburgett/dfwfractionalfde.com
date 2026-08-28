@@ -15,14 +15,13 @@ const full = openClients <= 0;
 <style>
   .avail {
     display: inline-flex; align-items: center; gap: 10px;
-    font-size: 0.92rem; padding: 9px 16px; border-radius: 999px;
-    border: 1px solid var(--border);
+    font-size: 0.88rem; padding: 9px 16px; border-radius: var(--radius);
+    border: 1px solid var(--border); background: var(--band);
+    font-family: var(--font);
   }
   .avail strong { color: var(--text); }
-  .avail span { color: var(--muted); }
-  .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; position: relative; }
-  .avail--full { background: rgba(255, 179, 71, 0.07); border-color: rgba(255, 179, 71, 0.35); }
-  .avail--full .dot { background: var(--accent); box-shadow: 0 0 0 4px rgba(255, 179, 71, 0.18); }
-  .avail--open { background: rgba(54, 214, 195, 0.07); border-color: rgba(54, 214, 195, 0.35); }
-  .avail--open .dot { background: var(--brand); box-shadow: 0 0 0 4px rgba(54, 214, 195, 0.18); }
+  .avail span { color: var(--muted-2); }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
+  .avail--full .dot { background: var(--brand); }
+  .avail--open .dot { background: var(--muted-2); }
 </style>

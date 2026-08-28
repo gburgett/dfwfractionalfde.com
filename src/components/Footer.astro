@@ -12,47 +12,49 @@ const year = new Date().getFullYear();
       </p>
     </div>
 
-    <div class="foot-cols">
-      <div>
-        <h4>Engagement</h4>
-        <a href="/how-it-works/">How it works</a>
-        <a href="/pricing/">Pricing</a>
-        <a href="/waitlist/">Join the waitlist</a>
-        <a href="/contact/">Project bid</a>
-      </div>
-      <div>
-        <h4>About</h4>
-        <a href="/about/">About Gordon</a>
-        <a href="/insights/">Insights</a>
-        <a href={site.owner.personalSite} rel="noopener" target="_blank">gordonburgett.net ↗</a>
-      </div>
+    <div class="foot-col">
+      <h4>Engagement</h4>
+      <a href="/how-it-works/">How it works</a>
+      <a href="/pricing/">Pricing</a>
+      <a href="/waitlist/">Join the waitlist</a>
+      <a href="/contact/">Project bid</a>
+    </div>
+    <div class="foot-col">
+      <h4>About</h4>
+      <a href="/about/">About Gordon</a>
+      <a href="/insights/">Insights</a>
+      <a href={site.owner.personalSite} rel="noopener" target="_blank">gordonburgett.net ↗</a>
+    </div>
+    <div class="foot-col">
+      <h4>Contact</h4>
+      <a href="/contact/">Book a conversation</a>
     </div>
   </div>
   <div class="container foot-bottom">
     <span>© {year} {site.name} · {site.domain}</span>
-    <span>Built with Astro · Serving Dallas–Fort Worth</span>
+    <span>Serving {site.region}</span>
   </div>
 </footer>
 
 <style>
-  .site-footer { border-top: 1px solid var(--border-soft); margin-top: 40px; background: rgba(8, 12, 24, 0.5); }
-  .foot { display: grid; grid-template-columns: 1.4fr 1fr; gap: 40px; padding: 56px 24px 32px; }
+  .site-footer { margin-top: 40px; background: var(--navy-deep); }
+  .foot { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; padding: 56px 24px 32px; }
   .brand-mark {
-    font-family: var(--mono); font-weight: 700; font-size: 0.82rem; color: #07101f;
-    background: linear-gradient(120deg, var(--brand), var(--brand-2));
-    padding: 8px 10px; border-radius: 9px; display: inline-block;
+    font-family: var(--font); font-weight: 700; font-size: 0.78rem; letter-spacing: 0.12em;
+    border: 1px solid var(--brand); color: var(--brand);
+    padding: 6px 7px; display: inline-block; align-self: flex-start;
   }
-  .foot-tag { margin-top: 16px; max-width: 38ch; }
-  .foot-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  .foot-cols h4 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--muted-2); margin-bottom: 12px; }
-  .foot-cols a { display: block; color: var(--muted); padding: 4px 0; font-size: 0.95rem; }
-  .foot-cols a:hover { color: var(--brand); }
+  .foot-tag { margin-top: 16px; max-width: 38ch; color: #8996AC; font-size: 0.92rem; }
+  .foot-col h4 { font-family: var(--font); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.14em; color: #5C6980; margin-bottom: 12px; font-weight: 600; }
+  .foot-col a { display: block; color: #A6B1C3; padding: 4px 0; font-size: 0.92rem; }
+  .foot-col a:hover { color: var(--brand); }
   .foot-bottom {
     display: flex; justify-content: space-between; gap: 14px; flex-wrap: wrap;
-    padding: 18px 24px 40px; border-top: 1px solid var(--border-soft);
-    color: var(--muted-2); font-size: 0.84rem;
+    padding: 18px 24px 40px; border-top: 1px solid #1B2740;
+    color: #5C6980; font-size: 0.82rem;
   }
   @media (max-width: 880px) {
-    .foot { grid-template-columns: 1fr; gap: 28px; }
+    .foot { grid-template-columns: 1fr 1fr; gap: 28px; }
+    .foot-brand { grid-column: 1 / -1; }
   }
 </style>
