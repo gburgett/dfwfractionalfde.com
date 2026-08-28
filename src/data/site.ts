@@ -13,9 +13,9 @@ export const site = {
     personalSite: 'https://gordonburgett.net',
     headshot: 'https://gordonburgett.net/images/headshot.jpg',
   },
-  // Capacity / availability — update these two values as the business changes.
-  maxClients: 5,
-  openClients: 0, // currently taking zero clients -> waitlist only
+  // Availability — set openClients to 0 for waitlist-only mode, or a positive
+  // number when actively accepting new engagements.
+  openClients: 0, // currently waitlist only
   minEngagementMonths: 6,
   contactEmail: 'gordon@dfwfractionalfde.com',
 };

@@ -53,7 +53,6 @@ it are silently accepted but never stored.
 
 Edit `src/data/site.ts`:
 
-- `maxClients` — hard cap shown across the site (currently **5**).
 - `openClients` — set to `0` for "currently full / waitlist only". Any value > 0
   flips the availability badge to "accepting new engagements".
 - `minEngagementMonths` — the stated minimum engagement (currently **6**).
