@@ -265,8 +265,8 @@ const featured = [...caseStudies]
   .textlink { color: var(--brand); font-weight: 600; font-family: var(--font); }
   .textlink:hover { text-decoration: underline; }
 
-  /* What is a Fractional FDE — label | prose | photo */
-  .fde { display: grid; grid-template-columns: 200px 1fr 440px; gap: 52px; align-items: start; }
+  /* What is a Fractional FDE — label | prose (photo column re-add when .fde-figure returns) */
+  .fde { display: grid; grid-template-columns: 200px 1fr; gap: 52px; align-items: start; }
   .fde-eyebrow { margin: 0; }
   .fde-body { display: flex; flex-direction: column; gap: 18px; max-width: 62ch; }
   .fde-body .serif-head { margin: 0; max-width: 34ch; }
@@ -285,6 +285,7 @@ const featured = [...caseStudies]
   .fixed { padding: 76px 0; background: var(--band); border-top: 1px solid var(--border-soft); }
   .fixed-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; }
   .fixed-head-copy { max-width: 620px; display: flex; flex-direction: column; gap: 10px; }
+  .fixed-head-copy .serif-head { max-width: none; }
   .fixed-intro { margin: 0; font-family: var(--font-serif); font-size: 1rem; color: var(--muted); }
   .fixed-scroll-hint { flex: none; font-family: var(--font); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-2); }
   .fixed-rail {
