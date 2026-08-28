@@ -2,6 +2,11 @@
 import Base from '../layouts/Base.astro';
 import { site } from '../data/site';
 import { env } from '../lib/env';
+import { packages } from '../data/packages';
+
+const packagePrefill = Object.fromEntries(
+  packages.map((p) => [p.slug, { name: p.name, price: p.price }])
+);
 ---
 <Base title="Got a project in mind?" description="Bring a defined project and get a firm fixed-price bid from a senior DFW engineer: clear scope, milestones, and one price. Or ask about a maintenance plan.">
   <section class="section section--tight">
@@ -77,7 +82,7 @@ import { env } from '../lib/env';
   async defer
 ></script>
 
-<script is:inline>
+<script is:inline define:vars={{ packagePrefill }}>
   function onTurnstileLoad() {
     const widget = document.getElementById('turnstile-widget');
     turnstile.render(widget, {
@@ -94,6 +99,20 @@ import { env } from '../lib/env';
   if (topic) {
     const sel = document.getElementById('topic');
     for (const opt of sel.options) if (opt.value === topic) sel.value = topic;
+  }
+
+  const pkg = packagePrefill[params.get('package')];
+  if (pkg) {
+    const sel = document.getElementById('topic');
+    for (const opt of sel.options) if (opt.value === 'project') sel.value = 'project';
+
+    const budget = document.getElementById('budget');
+    if (!budget.value) budget.value = pkg.price;
+
+    const message = document.getElementById('message');
+    if (!message.value) {
+      message.value = `I'd like to book the "${pkg.name}" fixed-price package (${pkg.price}).\n\nA bit about our setup:\n`;
+    }
   }
 </script>
 

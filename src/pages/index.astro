@@ -184,7 +184,7 @@ const featured = [...caseStudies]
               <ul class="svc-list">
                 {pkg.features.map((feature) => <li>{feature}</li>)}
               </ul>
-              <a class="textlink svc-cta" href={pkg.bookingUrl}>Book this →</a>
+              <a class="textlink svc-cta" href={`${pkg.bookingUrl}${pkg.bookingUrl.includes('?') ? '&' : '?'}package=${pkg.slug}`}>Book this →</a>
             </div>
           </article>
         ))}
@@ -294,11 +294,14 @@ const featured = [...caseStudies]
     -webkit-overflow-scrolling: touch;
   }
   .svc-card {
+    position: relative;
     flex: 0 0 420px; scroll-snap-align: start;
     display: flex; flex-direction: column;
     background: var(--panel); border: 1px solid var(--border);
     box-shadow: var(--shadow);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
+  .svc-card:has(.svc-cta:hover) { border-color: var(--brand); }
   .svc-media { height: 190px; background: var(--navy); overflow: hidden; }
   .svc-media img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
   .svc-body { padding: 26px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
@@ -312,6 +315,12 @@ const featured = [...caseStudies]
   .svc-list li { position: relative; padding-left: 24px; font-size: 0.9rem; line-height: 1.55; color: var(--muted); }
   .svc-list li::before { content: '→'; position: absolute; left: 0; color: var(--brand); }
   .svc-cta { margin-top: auto; }
+  /* Stretch the "Book this" link to cover the whole card. */
+  .svc-cta::after {
+    content: ''; position: absolute; inset: 0; z-index: 0;
+  }
+  /* Keep genuinely separate links (e.g. the case-study link) clickable. */
+  .svc-blurb a { position: relative; z-index: 1; }
   .svc-card--more {
     flex-basis: 320px; justify-content: center; gap: 12px; padding: 34px;
     background: transparent; border: 1px dashed var(--border); box-shadow: none;
