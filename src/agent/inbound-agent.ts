@@ -17,6 +17,7 @@ import { syncInbox, getPendingEmails, type InboundEmail } from './tools/imap.js'
 import { sendEmail } from './tools/email.js';
 import { getSubmissionsForEmail } from './tools/submissions.js';
 import { createSearchCaseStudiesTool } from './tools/case-studies.js';
+import { createSearchPackagesTool } from './tools/packages.js';
 import { site } from '../data/site.js';
 import { ensureEmbedding, searchConversations } from '../lib/rag.js';
 
@@ -24,7 +25,7 @@ assertAgentEnv();
 
 /** Build a per-email system prompt with the full email context baked in. */
 function systemPromptForEmail(email: InboundEmail): string {
-  return `You are Daneel, an AI assistant to ${site.owner.name}. Gordon is a fractional Forward Deployed Engineer (FDE) based in Dallas–Fort Worth, TX who embeds with client companies to build and ship AI-native software. He requires a minimum ${site.minEngagementMonths}-month engagement.
+  return `You are Daneel, an AI assistant to ${site.owner.name}. Gordon is a fractional Forward Deployed Engineer (FDE) based in Dallas–Fort Worth, TX who embeds with client companies to build and ship AI-native software. His core offering is a monthly subscription with a minimum ${site.minEngagementMonths}-month engagement; alongside it he sells a small set of productized, fixed-price packages for smaller scoped work (use search_packages to see them).
 
 You manage the r.daneel.olivaw@dfwfractionalfde.com inbox on Gordon's behalf. Be transparent that you are an AI — do not impersonate Gordon directly.
 
@@ -62,7 +63,7 @@ ${email.bodyText}
 
 2. Before categorizing, optionally call \`search_conversations\` to look up past exchanges with this sender — useful for context if they've reached out before or you've replied before.
 
-3. If the category is **genuine_inquiry**: compose a warm, personalized reply and call \`send_reply\`. Factor in "Current availability" above, and see "Citing relevant case studies for warm leads" and "Never guess at someone's waitlist/contact status" below before writing it.
+3. If the category is **genuine_inquiry**: compose a warm, personalized reply and call \`send_reply\`. Factor in "Current availability" above, and see "Citing relevant work for warm leads" and "Never guess at someone's waitlist/contact status" below before writing it.
 
 4. **Always call \`mark_processed\`** — for every email, regardless of category. This records the outcome so we don't process it again.
 
@@ -74,9 +75,11 @@ This email might be a reply to a **follow-up email you previously sent** from a 
 
 If a sender is responding to a prior follow-up and clearly expresses interest in working with Gordon (e.g. they want to discuss scope, timeline, budget, or schedule a call), call \`create_qualified_opportunity\` in addition to replying. This notifies Gordon directly with all the details.
 
-## Citing relevant case studies for warm leads
+## Citing relevant work for warm leads
 
 When you're following up on a warm lead — someone who has already expressed interest, is replying to a prior follow-up, or is asking questions about what Gordon can do — call \`search_case_studies\` with a description of their project or problem. If a genuinely relevant case study turns up, mention it briefly in your reply with its link, so they see concrete proof of similar work. Don't force it if nothing is truly relevant; a bad example is worse than no example.
+
+Also call \`search_packages\` with the same description. If their need maps onto a fixed-price package, name it with its price and link — it gives a hesitant or exploratory lead a concrete, low-commitment way to start. Don't push a package when a full subscription engagement is clearly the better fit.
 
 ## Never guess at someone's waitlist/contact status
 
@@ -85,7 +88,7 @@ Before telling someone they're on the waitlist, or inviting them to join the wai
 ## Reply guidelines
 
 - Open with a brief, natural introduction as Daneel — Gordon's AI assistant — unless the sender clearly already knows who you are from prior exchange.
-- Warm and personal, not templated-sounding. Reference specifics from their message, **any relevant past conversations** you found via search_conversations, and **any relevant case study** you found via search_case_studies.
+- Warm and personal, not templated-sounding. Reference specifics from their message, **any relevant past conversations** you found via search_conversations, **any relevant case study** you found via search_case_studies, and **any fitting fixed-price package** you found via search_packages (by name, with price and link).
 - Never invite someone to join the waitlist or fill out the contact form without first checking check_prior_submissions — they may have already done so.
 - Keep it brief: 3–5 short paragraphs.
 - Keep the reply consistent with "Current availability" above — never promise a slot or a call when the practice is waitlist-only.
@@ -253,6 +256,7 @@ function createTools(db: ReturnType<typeof getDb>, emailId: number, fromEmail: s
   });
 
   const searchCaseStudiesTool = createSearchCaseStudiesTool(db);
+  const searchPackagesTool = createSearchPackagesTool(db);
 
   const checkPriorSubmissionsTool = defineTool({
     name: 'check_prior_submissions',
@@ -273,7 +277,7 @@ function createTools(db: ReturnType<typeof getDb>, emailId: number, fromEmail: s
     },
   });
 
-  return [sendReplyTool, markProcessedTool, searchConversationsTool, createOpportunityTool, searchCaseStudiesTool, checkPriorSubmissionsTool] as const;
+  return [sendReplyTool, markProcessedTool, searchConversationsTool, createOpportunityTool, searchCaseStudiesTool, searchPackagesTool, checkPriorSubmissionsTool] as const;
 }
 
 /** Returns true if the email's processed_at column is non-null. */
@@ -312,7 +316,7 @@ export async function runInboundAgent(): Promise<void> {
     // Generate embedding for this email so future RAG searches can find it
     await ensureEmbedding(db, email.id, email.subject, email.bodyText);
 
-    const [sendReplyTool, markProcessedTool, searchConversationsTool, createOpportunityTool, searchCaseStudiesTool, checkPriorSubmissionsTool] =
+    const [sendReplyTool, markProcessedTool, searchConversationsTool, createOpportunityTool, searchCaseStudiesTool, searchPackagesTool, checkPriorSubmissionsTool] =
       createTools(db, email.id, email.fromEmail);
 
     const loader = new DefaultResourceLoader({
@@ -325,7 +329,7 @@ export async function runInboundAgent(): Promise<void> {
     const { session } = await createAgentSession({
       model,
       noTools: 'builtin',
-      customTools: [sendReplyTool, markProcessedTool, searchConversationsTool, createOpportunityTool, searchCaseStudiesTool, checkPriorSubmissionsTool],
+      customTools: [sendReplyTool, markProcessedTool, searchConversationsTool, createOpportunityTool, searchCaseStudiesTool, searchPackagesTool, checkPriorSubmissionsTool],
       resourceLoader: loader,
       sessionManager: SessionManager.inMemory(),
       settingsManager: SettingsManager.inMemory({ compaction: { enabled: false } }),

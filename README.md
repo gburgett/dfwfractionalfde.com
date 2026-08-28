@@ -10,10 +10,10 @@ Dallas–Fort Worth. Built with [Astro](https://docs.astro.build). Hosted at
 |------|---------|
 | `/` | Hero, the "Fractional FDE" positioning, capabilities, how-it-works teaser, syndicated insights |
 | `/how-it-works/` | The engagement model, on-site → embed → ship → maintenance |
-| `/pricing/` | Three panes — **Maintenance only ($599/mo, ≤2 hrs)**, **Subscription ($5,995/mo, featured)**, **Project bid (fixed price)** |
+| `/pricing/` | Three panes — **Maintenance only ($999/mo, ≤6 hrs)**, **Subscription ($6,995/mo, featured)**, **Project bid (fixed price)** |
 | `/about/` | Bio, capabilities, and tech stack pulled from gordonburgett.net |
 | `/insights/` | Articles & projects syndicated from gordonburgett.net |
-| `/waitlist/` | Waitlist signup form (currently the only way in — 0 of 5 slots open) |
+| `/waitlist/` | Waitlist signup form (currently the only way in — waitlist-only) |
 | `/contact/` | Firm fixed-price project bid request / maintenance enquiry |
 | `/thank-you/` | Post-submit confirmation |
 
@@ -61,6 +61,15 @@ Edit `src/data/site.ts`:
 
 Edit `src/data/posts.ts`. Each entry links back to the canonical post on
 `https://www.gordonburgett.net`.
+
+## Updating fixed-price packages
+
+Edit `src/data/packages.ts` — it's the single source of truth for both the
+homepage "Fixed price" rail and the agent DB import. `npm run build` runs
+`db:sync-packages`, which upserts each package (by `slug`) into the agent
+SQLite DB with an embedding so Daneel can search and cite them in lead
+follow-ups. Removing a package from the file prunes it from the DB on the
+next build.
 
 ## Notes
 

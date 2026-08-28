@@ -208,3 +208,112 @@ export async function searchCaseStudies(
     distance: r.distance,
   }));
 }
+
+export interface PackageSource {
+  slug: string;
+  name: string;
+  price: string;
+  term: string;
+  summary: string;
+  url: string;
+}
+
+export interface PackageResult {
+  slug: string;
+  name: string;
+  price: string;
+  term: string;
+  summary: string;
+  url: string;
+  distance: number;
+}
+
+/**
+ * Upsert a fixed-price package and its embedding, keyed by slug.
+ * Called from the package sync build step (scripts/sync-packages.ts).
+ */
+export async function upsertPackage(
+  db: Database.Database,
+  pkg: PackageSource,
+): Promise<void> {
+  const { slug, name, price, term, summary, url } = pkg;
+
+  db.prepare(`
+    INSERT INTO packages (slug, name, price, term, summary, url, updated_at)
+    VALUES (@slug, @name, @price, @term, @summary, @url, datetime('now'))
+    ON CONFLICT(slug) DO UPDATE SET
+      name = excluded.name,
+      price = excluded.price,
+      term = excluded.term,
+      summary = excluded.summary,
+      url = excluded.url,
+      updated_at = excluded.updated_at
+  `).run({ slug, name, price, term, summary, url });
+
+  const row = db.prepare('SELECT id FROM packages WHERE slug = ?').get(slug) as { id: number };
+
+  const text = `Package: ${name}\nPrice: ${price} (${term})\n\n${summary}`;
+  const vec = await generateEmbedding(text);
+  const blob = vectorToBlob(vec);
+  const hex = hexBlob(vec);
+
+  db.prepare(`
+    INSERT OR REPLACE INTO package_embeddings (package_id, embedding, updated_at)
+    VALUES (?, ?, datetime('now'))
+  `).run(row.id, blob);
+
+  // vec0 virtual tables don't honor INSERT OR REPLACE — delete first.
+  db.exec(`DELETE FROM vec_package_embeddings WHERE package_id = ${row.id}`);
+  db.exec(`INSERT INTO vec_package_embeddings (package_id, embedding) VALUES (${row.id}, ${hex})`);
+}
+
+/**
+ * Remove packages (and their embeddings, via ON DELETE CASCADE) whose slug
+ * is no longer present in `keepSlugs`.
+ */
+export function prunePackages(db: Database.Database, keepSlugs: string[]): number {
+  if (keepSlugs.length === 0) {
+    const result = db.prepare('DELETE FROM packages').run();
+    return result.changes;
+  }
+  const placeholders = keepSlugs.map(() => '?').join(', ');
+  const result = db.prepare(`DELETE FROM packages WHERE slug NOT IN (${placeholders})`).run(...keepSlugs);
+  return result.changes;
+}
+
+/**
+ * Search fixed-price packages for offerings similar to `query` — used by Daneel
+ * to point leads at a productized, scoped option when one fits.
+ */
+export async function searchPackages(
+  db: Database.Database,
+  query: string,
+  limit: number = 3,
+): Promise<PackageResult[]> {
+  const queryVec = await generateEmbedding(query);
+  const queryHex = hexBlob(queryVec);
+
+  type Row = {
+    slug: string; distance: number; name: string;
+    price: string; term: string; summary: string; url: string;
+  };
+
+  const rows = db.prepare(`
+    SELECT p.slug, v.distance, p.name, p.price, p.term, p.summary, p.url
+    FROM vec_package_embeddings v
+    INNER JOIN packages p ON p.id = v.package_id
+    WHERE v.embedding MATCH ${queryHex}
+      AND k = ?
+    ORDER BY v.distance ASC
+  `).all(limit) as Row[];
+
+  return rows.map(r => ({
+    slug: r.slug,
+    name: r.name,
+    price: r.price,
+    term: r.term,
+    summary: r.summary,
+    url: r.url,
+    distance: r.distance,
+  }));
+}

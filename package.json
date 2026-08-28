@@ -6,14 +6,15 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "npm run db:sync-case-studies && astro build",
+    "build": "npm run db:sync-case-studies && npm run db:sync-packages && astro build",
     "preview": "node ./dist/server/entry.mjs",
     "deploy": "bash scripts/deploy.sh",
     "astro": "astro",
     "agent:follow-up": "tsx src/agent/follow-up-agent.ts",
     "agent:inbound": "tsx src/agent/inbound-agent.ts",
     "db:migrate": "tsx scripts/migrate-jsonl.ts",
-    "db:sync-case-studies": "tsx scripts/sync-case-studies.ts"
+    "db:sync-case-studies": "tsx scripts/sync-case-studies.ts",
+    "db:sync-packages": "tsx scripts/sync-packages.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.105.0",

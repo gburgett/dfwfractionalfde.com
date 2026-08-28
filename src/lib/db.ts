@@ -102,6 +102,30 @@ export function getDb(): Database.Database {
       case_study_id INTEGER PRIMARY KEY,
       embedding FLOAT[${EMBEDDING_DIMS}]
     );
+
+    -- Fixed-price packages, synced from src/data/packages.ts at build time
+    CREATE TABLE IF NOT EXISTS packages (
+      id          INTEGER PRIMARY KEY AUTOINCREMENT,
+      slug        TEXT NOT NULL UNIQUE,
+      name        TEXT NOT NULL,
+      price       TEXT NOT NULL,
+      term        TEXT NOT NULL,
+      summary     TEXT NOT NULL,
+      url         TEXT NOT NULL,
+      updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS package_embeddings (
+      id         INTEGER PRIMARY KEY AUTOINCREMENT,
+      package_id INTEGER NOT NULL UNIQUE REFERENCES packages(id) ON DELETE CASCADE,
+      embedding  BLOB NOT NULL,
+      updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
+
+    CREATE VIRTUAL TABLE IF NOT EXISTS vec_package_embeddings USING vec0(
+      package_id INTEGER PRIMARY KEY,
+      embedding FLOAT[${EMBEDDING_DIMS}]
+    );
   `);
 
   // ── Migrations for pre-existing tables (safe to re-run) ────────────

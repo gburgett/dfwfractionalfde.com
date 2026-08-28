@@ -16,11 +16,12 @@ import { assertAgentEnv } from '../lib/env.js';
 import { getPendingSubmissions, getSubmissionsForEmail } from './tools/submissions.js';
 import { sendEmail } from './tools/email.js';
 import { createSearchCaseStudiesTool } from './tools/case-studies.js';
+import { createSearchPackagesTool } from './tools/packages.js';
 import { site } from '../data/site.js';
 
 assertAgentEnv();
 
-const SYSTEM_PROMPT = `You are Daneel, an AI assistant to ${site.owner.name}. Gordon is a fractional Forward Deployed Engineer (FDE) based in Dallas–Fort Worth, TX who embeds with client companies to build and ship AI-native software. He requires a minimum ${site.minEngagementMonths}-month engagement.
+const SYSTEM_PROMPT = `You are Daneel, an AI assistant to ${site.owner.name}. Gordon is a fractional Forward Deployed Engineer (FDE) based in Dallas–Fort Worth, TX who embeds with client companies to build and ship AI-native software. His core offering is a monthly subscription with a minimum ${site.minEngagementMonths}-month engagement; alongside it he sells a small set of productized, fixed-price packages for smaller scoped work (use search_packages to see them).
 
 You send emails on Gordon's behalf from r.daneel.olivaw@dfwfractionalfde.com, identifying yourself as his AI assistant. Be transparent that you are an AI — do not impersonate Gordon directly.
 
@@ -45,6 +46,7 @@ Every email you send must be consistent with this. Never state or imply an avail
    - **spam**: Gibberish, test data, clearly automated bot submissions, or completely irrelevant.
    - **other**: Doesn't fit above (e.g., job applications, partnership proposals that aren't solicitations, general questions about the field).
 4. For **genuine_inquiry** submissions: before writing the email, call search_case_studies with a description of their project or problem to check whether Gordon has done similar work before. If you find a relevant case study, mention it briefly and include its link — a concrete example builds far more trust than generic reassurance. Don't force it if nothing is genuinely relevant.
+   - Also call search_packages with the same description. If their need maps cleanly onto a fixed-price package, name it with its price and link — especially for smaller or exploratory asks, or anyone hesitant about a subscription. Don't push a package when a full engagement is the better fit.
 5. Also call check_prior_submissions with their email to see if they have other submissions on file. If, say, they're submitting the waitlist form but already have a contact form submission (or vice versa), acknowledge what you already have rather than treating them as brand new — and never invite someone to "join the waitlist" if a prior submission shows they already have.
 6. Compose a warm, personalized follow-up email and call send_followup_email. Keep it consistent with "Current availability" above, and tailor the tone slightly to the submission type — waitlist signups are expressing earlier-stage interest, while contact form submissions likely come with a defined project scope (Or may just be generic questions).
 7. Call mark_processed for every submission, regardless of category.
@@ -55,6 +57,7 @@ Every email you send must be consistent with this. Never state or imply an avail
 - Open with a brief, natural introduction: you're Daneel, Gordon's AI assistant, reaching out on his behalf.
 - Warm and personal, not templated-sounding. Reference specifics from their message.
 - If search_case_studies turned up a relevant example, weave it in naturally with its link — e.g. "Gordon built something similar for [client] — [link]" — rather than bolting it on as an afterthought.
+- If search_packages turned up a fitting fixed-price package, mention it by name with its price and link as a concrete, low-commitment starting point.
 - Never tell someone to join the waitlist, or ask if they want to, without having checked check_prior_submissions first — they may already be on it.
 - Keep it brief: 3–5 short paragraphs.
 - Keep the email consistent with "Current availability" above — never promise a slot or a call when the practice is waitlist-only.
@@ -156,6 +159,7 @@ export async function runFollowUpAgent(): Promise<void> {
   });
 
   const searchCaseStudiesTool = createSearchCaseStudiesTool(db);
+  const searchPackagesTool = createSearchPackagesTool(db);
 
   const checkPriorSubmissionsTool = defineTool({
     name: 'check_prior_submissions',
@@ -190,7 +194,7 @@ export async function runFollowUpAgent(): Promise<void> {
   const { session } = await createAgentSession({
     model,
     noTools: 'builtin',
-    customTools: [getPendingSubmissionsTool, sendFollowupEmailTool, markProcessedTool, searchCaseStudiesTool, checkPriorSubmissionsTool],
+    customTools: [getPendingSubmissionsTool, sendFollowupEmailTool, markProcessedTool, searchCaseStudiesTool, searchPackagesTool, checkPriorSubmissionsTool],
     resourceLoader: loader,
     sessionManager: SessionManager.inMemory(),
     settingsManager: SettingsManager.inMemory({ compaction: { enabled: false } }),

@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import PostCard from '../components/PostCard.astro';
 import { site } from '../data/site';
 import { caseStudies } from '../data/posts';
+import { packages } from '../data/packages';
 
 const featured = caseStudies;
 ---
@@ -157,78 +158,33 @@ const featured = caseStudies;
     </div>
     <div class="container">
       <div class="fixed-rail">
-        <article class="svc-card">
-          <div class="svc-media">
-            <img src="/data-flow-diagram.webp" alt="Annotated diagram of data moving between business systems" loading="lazy" />
-          </div>
-          <div class="svc-body">
-            <div class="svc-head">
-              <h3>Map your business processes</h3>
-              <div class="svc-price"><span class="amt">$4,750</span><span class="term">fixed · 3 days onsite</span></div>
+        {packages.map((pkg) => (
+          <article class="svc-card">
+            <div class="svc-media">
+              <img src={pkg.image} alt={pkg.imageAlt} loading="lazy" />
             </div>
-            <p class="svc-blurb">
-              I sit with your team and find where AI could really help.
-              You get a report with specific opportunities and actionable solutions.
-            </p>
-            <ul class="svc-list">
-              <li>Annotated flow map of your business processes</li>
-              <li>Ranked list of automation candidates</li>
-              <li>Written walkthrough with your team</li>
-              <li>3rd party solutions identified</li>
-            </ul>
-            <a class="textlink svc-cta" href="/contact/?topic=project">Book this →</a>
-          </div>
-        </article>
-
-        <article class="svc-card">
-          <div class="svc-media">
-            <img src="/cloudflare-os-card-2.png" alt="Cloudflare OS analytics dashboard" loading="lazy" />
-          </div>
-          <div class="svc-body">
-            <div class="svc-head">
-              <h3>Install &amp; configure Cloudflare OS</h3>
-              <div class="svc-price"><span class="amt">$3,950</span><span class="term">fixed · 1 week</span></div>
+            <div class="svc-body">
+              <div class="svc-head">
+                <h3>{pkg.name}</h3>
+                <div class="svc-price"><span class="amt">{pkg.price}</span><span class="term">{pkg.term}</span></div>
+              </div>
+              <p class="svc-blurb">
+                {pkg.blurb}
+                {pkg.caseStudySlug && (
+                  <>
+                    <br/>
+                    <br/>
+                    <a href={`/case-studies/${pkg.caseStudySlug}`}>{pkg.caseStudyLinkText}</a>
+                  </>
+                )}
+              </p>
+              <ul class="svc-list">
+                {pkg.features.map((feature) => <li>{feature}</li>)}
+              </ul>
+              <a class="textlink svc-cta" href={pkg.bookingUrl}>Book this →</a>
             </div>
-            <p class="svc-blurb">
-              The new AI-native business operating system.  Cloudflare OS enables your entire team to build tools and integrations,
-              automate processes, and collaborate on skills.  I deploy it into your Cloudflare tenant and configure governance rules,
-              audit trails, and spend limits.
-            </p>
-            <ul class="svc-list">
-              <li>Provisioned and access-scoped for your org</li>
-              <li>Connected to your data sources</li>
-              <li>2 working dashboards or reports pulled from your data</li>
-              <li>Up to 2 custom Gatekeepers or Gadgets</li>
-              <li>Source code lives in your repositories</li>
-            </ul>
-            <a class="textlink svc-cta" href="/contact/?topic=project">Book this →</a>
-          </div>
-        </article>
-
-        <article class="svc-card">
-          <div class="svc-media">
-            <img src="/cloudflare-os-card-2.png" alt="Cloudflare OS analytics dashboard" loading="lazy" />
-          </div>
-          <div class="svc-body">
-            <div class="svc-head">
-              <h3>AI Phone Receptionist</h3>
-              <div class="svc-price"><span class="amt">$9,250</span><span class="term">fixed · 2-4 weeks</span></div>
-            </div>
-            <p class="svc-blurb">
-              Genuinely helpful AI inbound voice receptionist handling first-layer or after-hours support.
-              Routes inbound calls better than an IVR tree, handles simple message-taking tasks, and escalates to human support.
-              <br/>
-              <br/>
-              <a href="/case-studies/servpro-voice-agent">See how I built this for ServPro →</a>
-            </p>
-            <ul class="svc-list">
-              <li>3 months of follow-up fine tuning on real recorded conversations</li>
-              <li>Connected to your system of record</li>
-              <li>You own the voice provider account and source code</li>
-            </ul>
-            <a class="textlink svc-cta" href="/contact/?topic=project">Book this →</a>
-          </div>
-        </article>
+          </article>
+        ))}
 
         <article class="svc-card svc-card--more">
           <p class="eyebrow eyebrow--accent">Got a project in mind?</p>
