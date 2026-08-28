@@ -18,4 +18,5 @@ server.log
 
 logs/
 server.log
-data
+# agent SQLite DB dir (DB_DIR default ./data) — not src/data/
+/data/
