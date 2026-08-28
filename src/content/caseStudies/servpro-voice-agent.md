@@ -3,49 +3,39 @@ title: "Building an AI Voice Receptionist for ServPro"
 description: "Case study: designing a genuinely helpful AI inbound voice agent that routes calls, takes messages, and knows when to escalate to a human."
 date: 2026-08-28
 client: "ServPro"
+hero: "/servpro-workflow.png"
+heroAlt: "The ServPro voice agent's call flow: a greeting node branches through intent classification into new/existing job, employment, and spam paths."
 ---
 
-<!-- DRAFT — outline only. Fill each section in. -->
-
-## The problem
-
-<!-- What was happening before. Missed calls, after-hours gaps, IVR tree frustration,
-     staff pulled off restoration work to answer the phone. Volume, stakes, why "just
-     hire a receptionist" wasn't the answer. -->
+A few months ago, I was approached by a ServPro franchisee to help build a new automated front desk agent to help them rapidly respond to callers and make them feel heard.
+Together with their team, I built a robust AI phone assistant that triaged incoming calls, escalated emergencies to on-call staff, and cut down on spam incidents for around $0.07/minute.
 
 ## Why not an IVR tree
 
-<!-- What a traditional phone menu does badly for this business. The kinds of calls
-     that don't fit a menu (emergency water damage, insurance adjusters, existing
-     job status). Set up the contrast with what the agent does. -->
+This ServPro franchisee was particular about their customers being able to access help quickly.  Often, someone is calling in distress because they just came home to a fire or water
+emergency and need a rapid response.  Asking them to navigate an IVR tree while under duress would lead to misrouted calls and general customer frustration.  I determined that a
+clearly announced AI agent receptionist would better serve their users while more quickly routing them to the human they actually need to talk to.
 
-## What we built
+## What I built
 
-<!-- High-level: the voice agent, the provider stack, where it sits in the call flow.
-     Diagram or screenshot placeholder. What it handles end-to-end vs. what it hands off. -->
-
-![Placeholder — call flow diagram](/data-flow-diagram.webp)
+ServPro came to me with a script; I turned that into a workflow.  While AI agents are naturally suited to following a customer service script, the instructions need to be reframed
+to better influence the model's decision making while on the phone call.  I turned the workflow into a deterministic state machine where after classifying the user's intent, the agent
+was able to respond with the right set of tools and the right guidance appropriate for that conversation.
 
 ## Design decisions
 
-<!-- The interesting engineering / product calls. Some candidates:
-     - How the agent decides to escalate vs. handle
-     - Grounding it in ServPro's service area, hours, and job types
-     - Connecting to the system of record for message-taking
-     - Latency and interruption handling in live voice
-     - Guardrails: what it will never promise or quote -->
+ServPro asked me to record new service requests as records in their database rather than escalating them to humans.  To accomplish this I gave the agent a tool that sent an HTTP POST request to a Ruby on Rails glueware application that I built.
+This POST request contains the agent's understanding of the intake record.  After the call ends, I ran a second agent over the transcript to verify the agent's understanding and correct anything the agent may have misheard.  This two-pass approach
+resulted in significantly greater accuracy.
 
-## Tuning on real conversations
+We added LLM-enforced guardrails, including instructions to prevent the agent from promising that the information was recorded unless the HTTP POST was successful.  Rigorous adversarial testing ensured that the agent stuck to the guardrails and
+properly followed the workflow.
 
-<!-- The 3 months of follow-up. Reviewing recorded calls, finding failure modes,
-     adjusting prompts and routing. Metrics before/after if available:
-     answer rate, escalation accuracy, caller drop-off, staff hours saved. -->
-
-## Results
-
-<!-- Outcomes in ServPro's terms. What changed for the team and for callers. -->
+![Test suite](/servpro-agent-test-suite.png)
 
 ## What ServPro owns
 
-<!-- Voice provider account, source code in their repos, the tuned prompts.
-     No lock-in. -->
+Servpro now owns their complete front desk voice agent at a cost of just $0.07/minute.  They can make tweaks and re-run tests at any time to adapt the agent to new circumstances.  I also handed off the Ruby on Rails glueware app to their internal
+development team, who is hosting it within their cloud. 
+
+A complete solution, full ownership, and successful deployment.  This is what I deliver as your fractional FDE.

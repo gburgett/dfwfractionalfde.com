@@ -3,6 +3,8 @@ title: "Building an Unstructured Data Import"
 description: "Case study: knowing when to apply AI and when not to. A pragmatic look at building a data import pipeline for community resources."
 date: 2024-11-16
 client: "Neighbor Solutions"
+hero: "/neighbor-solutions-hero.webp"
+heroAlt: "The Neighbor Solutions app: a list of community-resource reports beside a detail panel and a map of Dallas dotted with resource locations."
 ---
 
 Sometimes the hardest thing to figure out is not "how" to best apply a new technology, but "when not" to apply it. Nowhere has this been more true than with AI. With the rush to stick the AI brand on every project, software engineers are being pressured to "just throw more AI" at the problem and hope it works.

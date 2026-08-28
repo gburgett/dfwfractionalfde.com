@@ -7,7 +7,7 @@ interface Props {
 }
 
 const { entry } = Astro.props;
-const { title, description, date, client } = entry.data;
+const { title, description, date, client, hero, heroAlt } = entry.data;
 
 const dateLabel = date.toLocaleDateString('en-US', {
   year: 'numeric',
@@ -21,15 +21,38 @@ const dateLabel = date.toLocaleDateString('en-US', {
     <div class="container">
       <p class="eyebrow">Case study</p>
       <h1 style="max-width:24ch">{title}</h1>
-      <p class="muted" style="margin-bottom:28px">
+      <p class="muted" style="margin-bottom:0">
         {dateLabel} · {client}
       </p>
     </div>
   </section>
 
-  <section class="section" style="padding-top:0">
+  {hero && (
+    <section class="section section--tight" style="padding-top:0">
+      <div class="container">
+        <figure class="case-hero">
+          <img src={hero} alt={heroAlt ?? `${title} — ${client}`} />
+        </figure>
+      </div>
+    </section>
+  )}
+
+  <section class="section" style={hero ? undefined : 'padding-top:0'}>
     <div class="container prose">
       <slot />
     </div>
   </section>
 </Base>
+
+<style>
+  .case-hero {
+    margin: 0;
+  }
+  .case-hero img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+</style>

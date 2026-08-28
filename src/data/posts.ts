@@ -11,6 +11,15 @@ export type Post = {
 
 export const caseStudies: Post[] = [
   {
+    title: 'Building an AI Voice Receptionist for ServPro',
+    url: '/case-studies/servpro-voice-agent/',
+    date: '2026-08-28',
+    kind: 'Case Study',
+    summary:
+      'Designing a genuinely helpful AI inbound voice agent for a ServPro franchisee — one that triages calls, escalates emergencies to on-call staff, and knows when to hand off to a human, for about $0.07/minute.',
+    tags: ['case-study'],
+  },
+  {
     title: 'Building Alice, an Empowering AI Agent',
     url: '/case-studies/building-alice/',
     date: '2026-03-18',
