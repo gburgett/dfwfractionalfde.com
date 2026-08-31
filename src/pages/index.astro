@@ -168,7 +168,7 @@ const featured = [...caseStudies]
             </div>
             <div class="svc-body">
               <div class="svc-head">
-                <h3>{pkg.name}</h3>
+                <h3><a class="svc-title-link" href={`/packages/${pkg.slug}/`}>{pkg.name}</a></h3>
                 <div class="svc-price"><span class="amt">{pkg.price}</span><span class="term">{pkg.term}</span></div>
               </div>
               <p class="svc-blurb">
@@ -322,6 +322,8 @@ const featured = [...caseStudies]
   }
   /* Keep genuinely separate links (e.g. the case-study link) clickable. */
   .svc-blurb a { position: relative; z-index: 1; }
+  .svc-title-link { position: relative; z-index: 1; color: inherit; text-decoration: none; }
+  .svc-title-link:hover { text-decoration: underline; }
   .svc-card--more {
     flex-basis: 320px; justify-content: center; gap: 12px; padding: 34px;
     background: transparent; border: 1px dashed var(--border); box-shadow: none;
