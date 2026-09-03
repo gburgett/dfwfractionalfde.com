@@ -1,0 +1,213 @@
+---
+import Base from '../../layouts/Base.astro';
+import Availability from '../../components/Availability.astro';
+import { site } from '../../data/site';
+import { packages } from '../../data/packages';
+
+export async function getStaticPaths() {
+  return packages.map((pkg) => ({
+    params: { slug: pkg.slug },
+    props: { pkg },
+  }));
+}
+
+import type { Package } from '../../data/packages';
+interface Props {
+  pkg: Package;
+}
+
+const { pkg } = Astro.props;
+const bookingHref = `${pkg.bookingUrl}${pkg.bookingUrl.includes('?') ? '&' : '?'}package=${pkg.slug}`;
+const pageUrl = new URL(`/packages/${pkg.slug}/`, site.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Service',
+      name: pkg.name,
+      description: pkg.metaDescription,
+      url: pageUrl,
+      provider: {
+        '@type': 'Person',
+        name: site.owner.name,
+        url: site.owner.personalSite,
+      },
+      areaServed: site.region,
+      offers: {
+        '@type': 'Offer',
+        price: pkg.price.replace(/[^0-9.]/g, ''),
+        priceCurrency: 'USD',
+        url: pageUrl,
+      },
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: pkg.faqs.map((faq) => ({
+        '@type': 'Question',
+        name: faq.q,
+        acceptedAnswer: { '@type': 'Answer', text: faq.a },
+      })),
+    },
+  ],
+};
+---
+<Base title={pkg.name} description={pkg.metaDescription}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <section class="section section--tight">
+    <div class="container">
+      <p class="eyebrow eyebrow--accent">
+        <a class="crumb" href="/#fixed-price">Fixed price</a> / {pkg.name}
+      </p>
+      <div class="pkg-head">
+        <div>
+          <h1 style="max-width:20ch">{pkg.name}</h1>
+          <p class="lead pkg-tagline">{pkg.tagline}</p>
+        </div>
+        <div class="pkg-price-card">
+          <div class="pkg-price"><span class="amt">{pkg.price}</span><span class="term">{pkg.term}</span></div>
+          <a class="btn btn--primary pkg-cta" href={bookingHref}>Book this →</a>
+          <Availability />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0">
+    <div class="container">
+      <figure class="pkg-hero">
+        <img src={pkg.image} alt={pkg.imageAlt} loading="eager" />
+      </figure>
+    </div>
+  </section>
+
+  <section class="section section--band">
+    <div class="container split">
+      <div>
+        <p class="eyebrow eyebrow--accent">What you get</p>
+      </div>
+      <div class="pkg-includes">
+        <p class="pkg-blurb">{pkg.blurb}</p>
+        <ul class="pkg-list">
+          {pkg.features.map((feature) => <li>{feature}</li>)}
+        </ul>
+        {pkg.caseStudySlug && (
+          <a class="textlink" href={`/case-studies/${pkg.caseStudySlug}`}>{pkg.caseStudyLinkText}</a>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <p class="eyebrow eyebrow--accent center" style="justify-content:center">Why this works for a small business</p>
+      <div class="why-grid">
+        {pkg.smbWhy.map((item) => (
+          <div class="why-card">
+            <h3>{item.title}</h3>
+            <p>{item.body}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--tight">
+    <div class="container narrow">
+      <h2 class="center" style="margin-bottom:28px">Questions, answered</h2>
+      <div class="faq">
+        {pkg.faqs.map((faq) => (
+          <details>
+            <summary>{faq.q}</summary>
+            <p>{faq.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="waitlist-cta">
+    <div class="container waitlist-inner">
+      <div>
+        <p class="engagement-eyebrow">Ready to start?</p>
+        <h2 class="engagement-head">{pkg.name}, {pkg.price} fixed</h2>
+        <p class="waitlist-lead">{pkg.tagline}</p>
+      </div>
+      <div class="waitlist-actions">
+        <a class="btn btn--waitlist" href={bookingHref}>Book this →</a>
+        <a class="engagement-link" href="/#fixed-price">See other fixed-price packages</a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .crumb { color: inherit; text-decoration: none; }
+  .crumb:hover { text-decoration: underline; }
+
+  .pkg-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 40px; flex-wrap: wrap; }
+  .pkg-tagline { max-width: 52ch; margin-top: 4px; }
+  .pkg-price-card {
+    flex: none; display: flex; flex-direction: column; gap: 14px; align-items: flex-start;
+    background: var(--panel); border: 1px solid var(--border); border-left: 3px solid var(--brand);
+    padding: 22px 24px; box-shadow: var(--shadow-lg); min-width: 260px;
+  }
+  .pkg-price { display: flex; align-items: baseline; gap: 10px; }
+  .pkg-price .amt { font-family: var(--mono); font-size: 1.8rem; font-weight: 500; color: var(--brand); }
+  .pkg-price .term { font-family: var(--font); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-2); }
+  .pkg-cta { width: 100%; text-align: center; justify-content: center; }
+
+  .pkg-hero { margin: 0; }
+  .pkg-hero img {
+    display: block; width: 100%; max-height: 420px; object-fit: cover;
+    border-radius: var(--radius); border: 1px solid var(--border);
+  }
+
+  .split { display: grid; grid-template-columns: 260px 1fr; gap: 52px; align-items: start; }
+  .pkg-includes { display: flex; flex-direction: column; gap: 18px; }
+  .pkg-blurb { margin: 0; font-family: var(--font-serif); font-size: 1.05rem; line-height: 1.6; color: var(--muted); max-width: 62ch; }
+  .pkg-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+  .pkg-list li { position: relative; padding-left: 26px; font-size: 0.96rem; line-height: 1.55; }
+  .pkg-list li::before { content: '→'; position: absolute; left: 0; color: var(--brand); }
+  .textlink { color: var(--brand); font-weight: 600; font-family: var(--font); }
+  .textlink:hover { text-decoration: underline; }
+
+  .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 32px; }
+  .why-card {
+    background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 26px; box-shadow: var(--shadow);
+  }
+  .why-card h3 { font-size: 1.05rem; margin: 0 0 12px; }
+  .why-card p { margin: 0; font-size: 0.94rem; color: var(--muted); }
+
+  .narrow { max-width: 760px; }
+  .faq details {
+    border: 1px solid var(--border); border-radius: var(--radius); padding: 4px 20px; margin-bottom: 12px;
+    background: var(--band);
+  }
+  .faq summary { cursor: pointer; font-weight: 600; padding: 14px 0; list-style: none; font-family: var(--font); }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: '+'; float: right; color: var(--brand); font-size: 1.2rem; }
+  .faq details[open] summary::after { content: '–'; }
+  .faq p { margin: 0 0 16px; font-size: 0.95rem; }
+
+  .engagement-eyebrow {
+    font-family: var(--font); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--on-navy-accent); margin: 0 0 14px;
+  }
+  .engagement-link { font-size: 0.92rem; font-weight: 600; color: var(--on-navy-accent); text-decoration: underline; font-family: var(--font); }
+  .engagement-head { color: var(--on-navy-text); margin-bottom: 10px; }
+  .waitlist-cta { background: var(--navy); color: var(--on-navy-text); padding: 60px 0; }
+  .waitlist-inner { display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; flex-wrap: wrap; }
+  .waitlist-lead { max-width: 52ch; font-size: 1.02rem; color: var(--on-navy-muted); margin: 0; }
+  .waitlist-actions { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .btn--waitlist { background: var(--on-navy-accent); color: #201502; box-shadow: 0 8px 22px -10px rgba(211, 168, 104, 0.5); }
+
+  @media (max-width: 880px) {
+    .pkg-head { flex-direction: column; }
+    .pkg-price-card { width: 100%; }
+    .split { grid-template-columns: 1fr; gap: 22px; }
+    .why-grid { grid-template-columns: 1fr; }
+  }
+</style>
