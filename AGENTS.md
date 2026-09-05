@@ -26,7 +26,7 @@ Both endpoints share the same pattern: honeypot check (`company_website` field) 
 |------|---------|
 | `src/data/site.ts` | Site-wide config: `openClients` controls the availability badge; set `openClients: 0` for waitlist-only mode |
 | `src/data/posts.ts` | Syndicated insights list (links back to gordonburgett.net) |
-| `src/data/packages.ts` | Fixed-price packages: source of truth for the homepage "Fixed price" rail **and** the agent DB import (`scripts/sync-packages.ts`) so Daneel can cite them |
+| `src/content/packages/` | Fixed-price packages as Markdown: frontmatter (structured card data, FAQs) powers the homepage "Fixed price" rail and package landing pages; the body renders on detail pages and feeds the agent DB import (`scripts/sync-packages.ts`) so Daneel can cite them. Filename = slug — keep it stable |
 | `src/content/caseStudies/` | Markdown case studies rendered via `src/pages/case-studies/[slug].astro` using Astro content collections |
 | `src/lib/submissions.ts` | Form persistence: appends JSONL to `./submissions/<type>.jsonl` and optionally POSTs to `SUBMISSIONS_WEBHOOK` |
 

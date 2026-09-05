@@ -2,21 +2,24 @@
 import Base from '../../layouts/Base.astro';
 import Availability from '../../components/Availability.astro';
 import { site } from '../../data/site';
-import { packages } from '../../data/packages';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
 
 export async function getStaticPaths() {
-  return packages.map((pkg) => ({
-    params: { slug: pkg.slug },
-    props: { pkg },
+  const entries = await getCollection('packages');
+  return entries.map((entry) => ({
+    params: { slug: entry.slug },
+    props: { entry },
   }));
 }
 
-import type { Package } from '../../data/packages';
 interface Props {
-  pkg: Package;
+  entry: CollectionEntry<'packages'>;
 }
 
-const { pkg } = Astro.props;
+const { entry } = Astro.props;
+const pkg = entry.data;
+const { Content } = await entry.render();
 const bookingHref = `${pkg.bookingUrl}${pkg.bookingUrl.includes('?') ? '&' : '?'}package=${pkg.slug}`;
 const pageUrl = new URL(`/packages/${pkg.slug}/`, site.url).href;
 
@@ -100,16 +103,8 @@ const jsonLd = {
   </section>
 
   <section class="section">
-    <div class="container">
-      <p class="eyebrow eyebrow--accent center" style="justify-content:center">Why this works for a small business</p>
-      <div class="why-grid">
-        {pkg.smbWhy.map((item) => (
-          <div class="why-card">
-            <h3>{item.title}</h3>
-            <p>{item.body}</p>
-          </div>
-        ))}
-      </div>
+    <div class="container narrow pkg-body prose">
+      <Content />
     </div>
   </section>
 
@@ -173,15 +168,15 @@ const jsonLd = {
   .textlink { color: var(--brand); font-weight: 600; font-family: var(--font); }
   .textlink:hover { text-decoration: underline; }
 
-  .why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 32px; }
-  .why-card {
-    background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 26px; box-shadow: var(--shadow);
-  }
-  .why-card h3 { font-size: 1.05rem; margin: 0 0 12px; }
-  .why-card p { margin: 0; font-size: 0.94rem; color: var(--muted); }
-
   .narrow { max-width: 760px; }
+  .pkg-body h2 {
+    font-family: var(--font); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.16em;
+    text-transform: uppercase; color: var(--brand); text-align: center;
+    margin: 0 0 28px;
+  }
+  .pkg-body h3 { font-size: 1.05rem; margin: 28px 0 10px; }
+  .pkg-body h3:first-of-type { margin-top: 0; }
+  .pkg-body p { margin: 0 0 14px; font-size: 0.96rem; color: var(--muted); }
   .faq details {
     border: 1px solid var(--border); border-radius: var(--radius); padding: 4px 20px; margin-bottom: 12px;
     background: var(--band);
@@ -208,6 +203,5 @@ const jsonLd = {
     .pkg-head { flex-direction: column; }
     .pkg-price-card { width: 100%; }
     .split { grid-template-columns: 1fr; gap: 22px; }
-    .why-grid { grid-template-columns: 1fr; }
   }
 </style>

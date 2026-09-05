@@ -2,10 +2,10 @@
 import Base from '../layouts/Base.astro';
 import { site } from '../data/site';
 import { env } from '../lib/env';
-import { packages } from '../data/packages';
+import { getCollection } from 'astro:content';
 
 const packagePrefill = Object.fromEntries(
-  packages.map((p) => [p.slug, { name: p.name, price: p.price }])
+  (await getCollection('packages')).map((entry) => [entry.slug, { name: entry.data.name, price: entry.data.price }])
 );
 ---
 <Base title="Got a project in mind?" description="Bring a defined project and get a firm fixed-price bid from a senior DFW engineer: clear scope, milestones, and one price. Or ask about a maintenance plan.">

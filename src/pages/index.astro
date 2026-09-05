@@ -3,7 +3,12 @@ import Base from '../layouts/Base.astro';
 import PostCard from '../components/PostCard.astro';
 import { site } from '../data/site';
 import { caseStudies } from '../data/posts';
-import { packages } from '../data/packages';
+import { getCollection } from 'astro:content';
+
+// Fixed-price packages, ordered by their frontmatter `order` field.
+const packages = (await getCollection('packages'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((entry) => ({ slug: entry.slug, ...entry.data }));
 
 // Keep the homepage rail to the 3 most recent case studies.
 const featured = [...caseStudies]

@@ -1,32 +1,56 @@
 #!/usr/bin/env tsx
 /**
- * Build step: syncs src/data/packages.ts into the agent SQLite DB
+ * Build step: syncs src/content/packages/*.md into the agent SQLite DB
  * (packages + embeddings) so Daneel can search and cite fixed-price
  * packages when following up with leads.
+ * Frontmatter supplies the structured fields; the markdown body is
+ * included in the summary text so the agent can cite the prose too.
  * Safe to re-run — upserts by slug and prunes removed packages.
  */
+import { readdir, readFile } from 'node:fs/promises';
+import path from 'node:path';
+import matter from 'gray-matter';
 import { getDb } from '../src/lib/db.js';
 import { upsertPackage, prunePackages } from '../src/lib/rag.js';
-import { packages } from '../src/data/packages.js';
 import { site } from '../src/data/site.js';
+
+const PACKAGES_DIR = path.join(process.cwd(), 'src/content/packages');
 
 async function sync() {
   const db = getDb();
+  const files = (await readdir(PACKAGES_DIR)).filter(f => f.endsWith('.md'));
 
   const slugs: string[] = [];
-  for (const pkg of packages) {
-    const summary = [pkg.blurb, '', 'Includes:', ...pkg.features.map(f => `- ${f}`)].join('\n');
+  for (const file of files) {
+    const slug = file.replace(/\.md$/, '');
+    const raw = await readFile(path.join(PACKAGES_DIR, file), 'utf8');
+    const { data, content } = matter(raw);
+
+    if (!data.name || !data.price || !data.term || !data.blurb) {
+      console.warn(`  Skipping ${file}: missing name, price, term, or blurb in frontmatter`);
+      continue;
+    }
+
+    const features: string[] = Array.isArray(data.features) ? data.features : [];
+    const summary = [
+      data.blurb,
+      '',
+      'Includes:',
+      ...features.map(f => `- ${f}`),
+      '',
+      content.trim(),
+    ].join('\n');
 
     await upsertPackage(db, {
-      slug: pkg.slug,
-      name: pkg.name,
-      price: pkg.price,
-      term: pkg.term,
+      slug,
+      name: data.name,
+      price: data.price,
+      term: data.term,
       summary,
-      url: `${site.url}${pkg.bookingUrl}`,
+      url: `${site.url}${data.bookingUrl ?? '/contact/?topic=project'}`,
     });
-    slugs.push(pkg.slug);
-    console.log(`  Synced package: ${pkg.slug}`);
+    slugs.push(slug);
+    console.log(`  Synced package: ${slug}`);
   }
 
   const pruned = prunePackages(db, slugs);

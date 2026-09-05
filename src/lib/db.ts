@@ -103,7 +103,7 @@ export function getDb(): Database.Database {
       embedding FLOAT[${EMBEDDING_DIMS}]
     );
 
-    -- Fixed-price packages, synced from src/data/packages.ts at build time
+    -- Fixed-price packages, synced from src/content/packages/*.md at build time
     CREATE TABLE IF NOT EXISTS packages (
       id          INTEGER PRIMARY KEY AUTOINCREMENT,
       slug        TEXT NOT NULL UNIQUE,
