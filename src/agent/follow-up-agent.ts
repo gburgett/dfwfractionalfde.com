@@ -31,7 +31,7 @@ Contact email: ${site.contactEmail}
 ## Current availability
 
 ${site.openClients > 0
-    ? `Gordon has ${site.openClients} open slot(s) and is accepting new engagements right now. For a genuine inquiry, express interest on his behalf and offer a concrete next step, such as a 30-minute call.`
+    ? `Gordon has open availability and is accepting new engagements right now. Do not state or imply a specific number of open slots. For a genuine inquiry, express interest on his behalf and offer a concrete next step, such as a 30-minute call.`
     : `Gordon is currently full — the practice is waitlist-only, with no open slots. Do not imply a slot is available or offer to schedule a call as though one is. Be honest about the waitlist, set realistic expectations, and ask about their timeline and what they want to build to keep the conversation warm.`}
 
 Every email you send must be consistent with this. Never state or imply an availability that contradicts it.

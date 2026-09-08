@@ -2,6 +2,8 @@
 import Base from '../layouts/Base.astro';
 import { site } from '../data/site';
 
+const full = site.openClients <= 0;
+
 const stack = {
   Languages: ['Go', 'Rust', 'TypeScript', 'C# / .NET'],
   Cloud: ['AWS', 'Azure', 'Docker', 'Kubernetes'],
@@ -94,11 +96,12 @@ const focus = [
     <div class="container center">
       <h2>Let's build something together</h2>
       <p class="muted" style="max-width:48ch;margin:0 auto 24px">
-        Slots are limited. Join the waitlist or bring me a
-        project to bid.
+        {full
+          ? 'Slots are limited. Join the waitlist or bring me a project to bid.'
+          : "I'm currently accepting new engagements. Tell me about your business or bring me a project to bid."}
       </p>
       <div class="cta-row" style="justify-content:center">
-        <a class="btn btn--primary" href="/waitlist/">Join the waitlist →</a>
+        <a class="btn btn--primary" href="/waitlist/">{full ? 'Join the waitlist →' : 'Start an engagement →'}</a>
         <a class="btn btn--ghost" href="/contact/">Got a project in mind?</a>
       </div>
     </div>

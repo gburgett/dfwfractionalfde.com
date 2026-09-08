@@ -14,6 +14,8 @@ const packages = (await getCollection('packages'))
 const featured = [...caseStudies]
   .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
   .slice(0, 3);
+
+const full = site.openClients <= 0;
 ---
 <Base>
   <!-- Hero -->
@@ -32,7 +34,7 @@ const featured = [...caseStudies]
           Just the last mile of AI transformation that has to be built, not pitched.
         </p>
         <div class="cta-row">
-          <a class="btn btn--primary" href="/waitlist/">Join the waitlist →</a>
+          <a class="btn btn--primary" href="/waitlist/">{full ? 'Join the waitlist →' : 'Start an engagement →'}</a>
           <a class="btn btn--ghost" href="#fixed-price">Buy a fixed-price package →</a>
         </div>
       </div>
@@ -223,15 +225,16 @@ const featured = [...caseStudies]
   <section class="waitlist-cta">
     <div class="container waitlist-inner">
       <div>
-        <p class="engagement-eyebrow">Currently full</p>
-        <h2 class="engagement-head">Join the waitlist</h2>
+        <p class="engagement-eyebrow">{full ? 'Currently full' : 'Now accepting engagements'}</p>
+        <h2 class="engagement-head">{full ? 'Join the waitlist' : 'Start an engagement'}</h2>
         <p class="waitlist-lead">
-          I keep the practice small to keep the work deep and the relationship real.
-          Get on the waitlist and you'll be first to hear when a slot opens.
+          {full
+            ? "I keep the practice small to keep the work deep and the relationship real. Get on the waitlist and you'll be first to hear when a slot opens."
+            : "I keep the practice small to keep the work deep and the relationship real. Tell me about your business and I'll follow up to schedule a call."}
         </p>
       </div>
       <div class="waitlist-actions">
-        <a class="btn btn--waitlist" href="/waitlist/">Join the waitlist →</a>
+        <a class="btn btn--waitlist" href="/waitlist/">{full ? 'Join the waitlist →' : 'Start an engagement →'}</a>
         <a class="engagement-link" href="/contact/?topic=project">Got a project in mind?</a>
       </div>
     </div>

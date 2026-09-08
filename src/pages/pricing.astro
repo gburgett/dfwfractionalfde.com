@@ -2,6 +2,8 @@
 import Base from '../layouts/Base.astro';
 import Availability from '../components/Availability.astro';
 import { site } from '../data/site';
+
+const full = site.openClients <= 0;
 ---
 <Base title="Pricing" description="Up-front, subscription pricing for a Fractional Forward Deployed Engineer in DFW. Maintenance plans and fixed-price project bids available.">
   <section class="section section--tight">
@@ -57,8 +59,12 @@ import { site } from '../data/site';
             <li>Direct access: no ticket queue, no account managers</li>
             <li><strong>6-month minimum</strong> engagement</li>
           </ul>
-          <a class="btn btn--primary plan-btn" href="/waitlist/">Join the waitlist →</a>
-          <p class="plan-foot">Currently full. The waitlist is the only way in; you'll be first to know when a slot opens.</p>
+          <a class="btn btn--primary plan-btn" href="/waitlist/">{full ? 'Join the waitlist →' : 'Start an engagement →'}</a>
+          <p class="plan-foot">
+            {full
+              ? "Currently full. The waitlist is the only way in; you'll be first to know when a slot opens."
+              : "Now accepting new engagements. Tell me about your business and I'll follow up to schedule a call."}
+          </p>
           <p class="plan-fine">Up to 40 hours of work per month, averaged over 3 months.</p>
         </div>
 
@@ -95,10 +101,12 @@ import { site } from '../data/site';
       <h2 class="center" style="margin-bottom:28px">Pricing questions, answered</h2>
       <div class="faq">
         <details>
-          <summary>Why a waitlist?</summary>
-          <p>Forward deployed means genuinely embedded. Each engagement takes real focus to learn a
-          business deeply and build for it well, so when my calendar is full, new engagements start
-          from the waitlist. You'll be first to know when a slot opens.</p>
+          <summary>{full ? 'Why a waitlist?' : 'How do we get started?'}</summary>
+          <p>
+            {full
+              ? "Forward deployed means genuinely embedded. Each engagement takes real focus to learn a business deeply and build for it well, so when my calendar is full, new engagements start from the waitlist. You'll be first to know when a slot opens."
+              : "Fill out the form and I'll follow up to schedule a call and confirm scope. Forward deployed means genuinely embedded, so I keep the number of concurrent clients limited to what I can give real focus — when the calendar fills up, new engagements move to a waitlist."}
+          </p>
         </details>
         <details>
           <summary>Why a six-month minimum?</summary>

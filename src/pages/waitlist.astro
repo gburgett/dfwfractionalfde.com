@@ -3,15 +3,23 @@ import Base from '../layouts/Base.astro';
 import Availability from '../components/Availability.astro';
 import { site } from '../data/site';
 import { env } from '../lib/env';
+
+const full = site.openClients <= 0;
 ---
-<Base title="Join the waitlist" description="Join the waitlist for a Fractional Forward Deployed Engineer in Dallas–Fort Worth. Currently full — get first notice when a slot opens.">
+<Base
+  title={full ? 'Join the waitlist' : 'Start an engagement'}
+  description={full
+    ? 'Join the waitlist for a Fractional Forward Deployed Engineer in Dallas–Fort Worth. Currently full — get first notice when a slot opens.'
+    : 'Start an engagement with a Fractional Forward Deployed Engineer in Dallas–Fort Worth. Tell me about your business and I\'ll follow up to schedule a call.'}
+>
   <section class="section section--tight">
     <div class="container narrow">
-      <p class="eyebrow">Waitlist</p>
-      <h1>Claim the next open slot</h1>
+      <p class="eyebrow">{full ? 'Waitlist' : 'Get started'}</p>
+      <h1>{full ? 'Claim the next open slot' : 'Tell me about your business'}</h1>
       <p class="lead" style="margin-bottom:20px">
-        I'm currently full. Add yourself to the waitlist and you'll be the
-        first to hear when a slot opens. No spam, no obligation.
+        {full
+          ? "I'm currently full. Add yourself to the waitlist and you'll be the first to hear when a slot opens. No spam, no obligation."
+          : "I'm currently accepting new engagements. Fill out the form below and I'll follow up to schedule a call. No spam, no obligation."}
       </p>
       <Availability />
 
@@ -82,7 +90,7 @@ import { env } from '../lib/env';
           <input type="hidden" name="cf-turnstile-response" id="turnstile-response" />
         </div>
 
-        <button class="btn btn--primary" type="submit" style="width:100%">Join the waitlist →</button>
+        <button class="btn btn--primary" type="submit" style="width:100%">{full ? 'Join the waitlist →' : 'Start an engagement →'}</button>
         <p class="muted" style="font-size:0.82rem;margin:14px 0 0">
           Prefer to talk about a one-off build instead? <a class="textlink" href="/contact/?topic=project">Request a fixed-price bid →</a>
         </p>

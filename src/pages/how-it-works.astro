@@ -2,6 +2,8 @@
 import Base from '../layouts/Base.astro';
 import { site } from '../data/site';
 
+const full = site.openClients <= 0;
+
 const phases = [
   {
     n: '01', t: 'Discovery & on-site kickoff',
@@ -73,13 +75,14 @@ const diffs = [
 
   <section class="section">
     <div class="container center">
-      <h2>Ready when a slot opens?</h2>
+      <h2>{full ? 'Ready when a slot opens?' : 'Ready to get started?'}</h2>
       <p class="muted" style="max-width:50ch;margin:0 auto 24px">
-        I'm currently full.
-        Join the waitlist to claim the next open slot.
+        {full
+          ? "I'm currently full. Join the waitlist to claim the next open slot."
+          : "I'm currently accepting new engagements. Tell me about your business and I'll follow up to schedule a call."}
       </p>
       <div class="cta-row" style="justify-content:center">
-        <a class="btn btn--primary" href="/waitlist/">Join the waitlist →</a>
+        <a class="btn btn--primary" href="/waitlist/">{full ? 'Join the waitlist →' : 'Start an engagement →'}</a>
         <a class="btn btn--ghost" href="/pricing/">See pricing</a>
       </div>
     </div>

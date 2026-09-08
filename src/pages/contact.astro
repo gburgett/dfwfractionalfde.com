@@ -7,6 +7,8 @@ import { getCollection } from 'astro:content';
 const packagePrefill = Object.fromEntries(
   (await getCollection('packages')).map((entry) => [entry.slug, { name: entry.data.name, price: entry.data.price }])
 );
+
+const full = site.openClients <= 0;
 ---
 <Base title="Got a project in mind?" description="Bring a defined project and get a firm fixed-price bid from a senior DFW engineer: clear scope, milestones, and one price. Or ask about a maintenance plan.">
   <section class="section section--tight">
@@ -70,7 +72,7 @@ const packagePrefill = Object.fromEntries(
 
         <button class="btn btn--primary" type="submit" style="width:100%">Request a bid →</button>
         <p class="muted" style="font-size:0.82rem;margin:14px 0 0">
-          Looking for the ongoing subscription instead? <a class="textlink" href="/waitlist/">Join the waitlist →</a>
+          Looking for the ongoing subscription instead? <a class="textlink" href="/waitlist/">{full ? 'Join the waitlist →' : 'Start an engagement →'}</a>
         </p>
       </form>
     </div>
