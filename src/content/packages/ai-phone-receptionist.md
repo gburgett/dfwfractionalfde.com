@@ -11,7 +11,7 @@ features:
   - "Connected to your system of record"
   - "You own the voice provider account and source code"
 bookingUrl: "/contact/?topic=project"
-caseStudySlug: "servpro-voice-agent"
+caseStudySlug: "2026-08-28-servpro-voice-agent"
 caseStudyLinkText: "See how I built this for ServPro →"
 tagline: "Never miss another call — without the cost of a full-time front desk hire."
 metaDescription: "A fixed-price AI phone receptionist for small businesses: answers calls 24/7, routes and takes messages better than an IVR, and escalates emergencies to a human."

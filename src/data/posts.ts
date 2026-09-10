@@ -12,7 +12,7 @@ export type Post = {
 export const caseStudies: Post[] = [
   {
     title: 'Building an AI Voice Receptionist for ServPro',
-    url: '/case-studies/servpro-voice-agent/',
+    url: '/case-studies/2026-08-28-servpro-voice-agent/',
     date: '2026-08-28',
     kind: 'Case Study',
     summary:
@@ -21,7 +21,7 @@ export const caseStudies: Post[] = [
   },
   {
     title: 'Building Alice, an Empowering AI Agent',
-    url: '/case-studies/building-alice/',
+    url: '/case-studies/2026-03-18-building-alice/',
     date: '2026-03-18',
     kind: 'Case Study',
     summary:
@@ -30,7 +30,7 @@ export const caseStudies: Post[] = [
   },
   {
     title: 'Building an Unstructured Data Import',
-    url: '/case-studies/unstructured-data-import/',
+    url: '/case-studies/2024-11-16-unstructured-data-import/',
     date: '2024-11-16',
     kind: 'Case Study',
     summary:
