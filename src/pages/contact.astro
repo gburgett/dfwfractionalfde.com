@@ -5,7 +5,7 @@ import { env } from '../lib/env';
 import { getCollection } from 'astro:content';
 
 const packagePrefill = Object.fromEntries(
-  (await getCollection('packages')).map((entry) => [entry.slug, { name: entry.data.name, price: entry.data.price }])
+  (await getCollection('packages')).map((entry) => [entry.slug, { name: entry.data.name }])
 );
 
 const full = site.openClients <= 0;
@@ -79,22 +79,27 @@ const full = site.openClients <= 0;
   </section>
 </Base>
 
+<script is:inline>
+  window.onTurnstileLoad = function () {
+    const widget = document.getElementById('turnstile-widget');
+    if (!widget || typeof turnstile === 'undefined') return;
+    turnstile.render(widget, {
+      sitekey: widget.dataset.sitekey,
+      callback: function (token) {
+        document.getElementById('turnstile-response').value = token;
+      },
+      'error-callback': function () { return true; },   // auto-retry on failure
+      'timeout-callback': function () { return true; }, // auto-retry on timeout
+    });
+  };
+</script>
+
 <script is:inline
   src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad"
   async defer
 ></script>
 
 <script is:inline define:vars={{ packagePrefill }}>
-  function onTurnstileLoad() {
-    const widget = document.getElementById('turnstile-widget');
-    turnstile.render(widget, {
-      sitekey: widget.dataset.sitekey,
-      callback: function(token) {
-        document.getElementById('turnstile-response').value = token;
-      },
-    });
-  }
-
   const params = new URLSearchParams(location.search);
   if (params.get('error')) document.getElementById('error').style.display = 'block';
   const topic = params.get('topic');
@@ -108,12 +113,9 @@ const full = site.openClients <= 0;
     const sel = document.getElementById('topic');
     for (const opt of sel.options) if (opt.value === 'project') sel.value = 'project';
 
-    const budget = document.getElementById('budget');
-    if (!budget.value) budget.value = pkg.price;
-
     const message = document.getElementById('message');
     if (!message.value) {
-      message.value = `I'd like to book the "${pkg.name}" fixed-price package (${pkg.price}).\n\nA bit about our setup:\n`;
+      message.value = `I'd like to book the "${pkg.name}" fixed-price package.\n\nA bit about our setup:\n`;
     }
   }
 </script>

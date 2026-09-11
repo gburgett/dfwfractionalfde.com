@@ -1,6 +1,5 @@
 #!/usr/bin/env tsx
 import { Type } from "typebox";
-import { getModel } from "@earendil-works/pi-ai";
 import {
   AuthStorage,
   createAgentSession,
@@ -18,6 +17,7 @@ import { sendEmail } from './tools/email.js';
 import { getSubmissionsForEmail } from './tools/submissions.js';
 import { createSearchCaseStudiesTool } from './tools/case-studies.js';
 import { createSearchPackagesTool } from './tools/packages.js';
+import { resolveAgentModel } from './model.js';
 import { site } from '../data/site.js';
 import { ensureEmbedding, searchConversations } from '../lib/rag.js';
 
@@ -304,11 +304,17 @@ export async function runInboundAgent(): Promise<void> {
 
   console.log(`[inbound-agent] ${pending.length} pending email(s)`);
 
-  const model = getModel('fireworks', 'accounts/fireworks/models/deepseek-v4-pro');
-  if (!model) throw new Error('DeepSeek v4 Pro model not found in pi model registry');
-
   const authStorage = AuthStorage.create();
   const modelRegistry = ModelRegistry.create(authStorage);
+
+  // Load extensions once up front so the exe.dev LLM integration providers get
+  // registered in the shared registry before we resolve the model.
+  const bootstrapLoader = new DefaultResourceLoader({ cwd: process.cwd(), agentDir: getAgentDir() });
+  await bootstrapLoader.reload();
+  const model = resolveAgentModel(bootstrapLoader, modelRegistry);
+  console.log(`[inbound-agent] Using model ${model.provider}/${model.id}`);
+
+  const modelErrors: string[] = [];
 
   for (const email of pending) {
     console.log(`[inbound-agent] Processing email id=${email.id} from ${email.fromEmail}...`);
@@ -341,6 +347,9 @@ export async function runInboundAgent(): Promise<void> {
       if (event.type === 'message_update' && event.assistantMessageEvent.type === 'text_delta') {
         process.stdout.write(event.assistantMessageEvent.delta);
       }
+      if (event.type === 'turn_end' && event.message.errorMessage) {
+        modelErrors.push(`id=${email.id}: ${event.message.errorMessage}`);
+      }
     });
 
     // First pass — let the agent handle the email
@@ -365,6 +374,10 @@ export async function runInboundAgent(): Promise<void> {
     }
 
     session.dispose();
+  }
+
+  if (modelErrors.length > 0) {
+    throw new Error(`Model error(s) during run: ${modelErrors.join(' | ')}`);
   }
 
   console.log('[inbound-agent] Run complete.');

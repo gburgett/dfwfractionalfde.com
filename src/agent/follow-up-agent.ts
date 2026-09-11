@@ -1,6 +1,5 @@
 #!/usr/bin/env tsx
 import { Type } from "typebox";
-import { getModel } from "@earendil-works/pi-ai";
 import {
   AuthStorage,
   createAgentSession,
@@ -17,6 +16,7 @@ import { getPendingSubmissions, getSubmissionsForEmail } from './tools/submissio
 import { sendEmail } from './tools/email.js';
 import { createSearchCaseStudiesTool } from './tools/case-studies.js';
 import { createSearchPackagesTool } from './tools/packages.js';
+import { resolveAgentModel } from './model.js';
 import { site } from '../data/site.js';
 
 assertAgentEnv();
@@ -182,14 +182,14 @@ export async function runFollowUpAgent(): Promise<void> {
     },
   });
 
-  const model = getModel('fireworks', 'accounts/fireworks/models/deepseek-v4-pro');
-  if (!model) throw new Error('DeepSeek v4 Pro model not found in pi model registry');
-
   const authStorage = AuthStorage.create();
   const modelRegistry = ModelRegistry.create(authStorage);
 
   const loader = new DefaultResourceLoader({ cwd: process.cwd(), agentDir: getAgentDir(), systemPromptOverride: () => SYSTEM_PROMPT });
   await loader.reload();
+
+  const model = resolveAgentModel(loader, modelRegistry);
+  console.log(`[follow-up-agent] Using model ${model.provider}/${model.id}`);
 
   const { session } = await createAgentSession({
     model,
@@ -204,16 +204,25 @@ export async function runFollowUpAgent(): Promise<void> {
 
   console.log('[follow-up-agent] Starting run...');
 
+  const modelErrors: string[] = [];
   session.subscribe((event) => {
     if (event.type === 'message_update' && event.assistantMessageEvent.type === 'text_delta') {
       process.stdout.write(event.assistantMessageEvent.delta);
+    }
+    if (event.type === 'turn_end' && event.message.errorMessage) {
+      modelErrors.push(event.message.errorMessage);
     }
   });
 
   await session.prompt('Please process all pending form submissions from the website (contact and waitlist).');
   process.stdout.write('\n');
-  console.log('[follow-up-agent] Run complete.');
   session.dispose();
+
+  if (modelErrors.length > 0) {
+    throw new Error(`Model error(s) during run: ${modelErrors.join(' | ')}`);
+  }
+
+  console.log('[follow-up-agent] Run complete.');
 }
 
 // CLI entry point — run directly with: npm run agent:follow-up

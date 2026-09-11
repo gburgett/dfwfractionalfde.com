@@ -14,9 +14,13 @@ async function verifyTurnstile(token: string): Promise<boolean> {
         response: token,
       }),
     });
-    const data = await resp.json() as { success: boolean };
+    const data = await resp.json() as { success: boolean; 'error-codes'?: string[] };
+    if (!data.success) {
+      console.error('[turnstile] siteverify failed:', JSON.stringify(data['error-codes'] || data));
+    }
     return data.success;
-  } catch {
+  } catch (err) {
+    console.error('[turnstile] siteverify error:', err);
     return false;
   }
 }
@@ -28,7 +32,12 @@ export const POST: APIRoute = async ({ request, redirect }) => {
 
   // Verify Turnstile CAPTCHA
   const turnToken = fields['cf-turnstile-response'];
-  if (!turnToken || !(await verifyTurnstile(turnToken))) {
+  if (!turnToken) {
+    console.error('[turnstile] missing token in submission (widget likely never rendered), UA:', request.headers.get('user-agent'));
+    return redirect('/contact/?error=1', 303);
+  }
+  if (!(await verifyTurnstile(turnToken))) {
+    console.error('[turnstile] token rejected, UA:', request.headers.get('user-agent'));
     return redirect('/contact/?error=1', 303);
   }
 

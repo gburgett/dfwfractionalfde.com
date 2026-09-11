@@ -1,5 +1,5 @@
 ---
-order: 2
+order: 4
 name: "Install & configure Cloudflare OS"
 price: "$3,950"
 term: "fixed · 1 week"

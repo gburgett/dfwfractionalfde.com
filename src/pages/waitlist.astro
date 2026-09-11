@@ -99,22 +99,27 @@ const full = site.openClients <= 0;
   </section>
 </Base>
 
+<script is:inline>
+  window.onTurnstileLoad = function () {
+    const widget = document.getElementById('turnstile-widget');
+    if (!widget || typeof turnstile === 'undefined') return;
+    turnstile.render(widget, {
+      sitekey: widget.dataset.sitekey,
+      callback: function (token) {
+        document.getElementById('turnstile-response').value = token;
+      },
+      'error-callback': function () { return true; },   // auto-retry on failure
+      'timeout-callback': function () { return true; }, // auto-retry on timeout
+    });
+  };
+</script>
+
 <script is:inline
   src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad"
   async defer
 ></script>
 
 <script is:inline>
-  function onTurnstileLoad() {
-    const widget = document.getElementById('turnstile-widget');
-    turnstile.render(widget, {
-      sitekey: widget.dataset.sitekey,
-      callback: function(token) {
-        document.getElementById('turnstile-response').value = token;
-      },
-    });
-  }
-
   if (new URLSearchParams(location.search).get('error')) {
     document.getElementById('error').style.display = 'block';
   }

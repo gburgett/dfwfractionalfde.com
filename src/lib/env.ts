@@ -13,6 +13,7 @@ const schema = z.object({
   TURNSTILE_SECRET_KEY: z.string().default('0x4AAAAAADrnBL0GjCTIQpbnsZfeqpNYoro'),
 
   // Agent
+  AGENT_MODEL:          z.string().optional(), // "provider/model-id" override (default: see src/agent/model.ts)
   EASYMAIL_EMAIL:       z.string().optional(),
   EASYMAIL_PASSWORD:    z.string().optional(),
   EASYMAIL_AGENT_EMAIL: z.string().optional(),
