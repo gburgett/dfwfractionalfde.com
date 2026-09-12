@@ -34,8 +34,8 @@ EASYMAIL_AGENT_EMAIL=agent@yourdomain.com  # optional: override From address for
 ## Required Packages
 
 ```bash
-npm install nodemailer imapflow
-npm install --save-dev @types/nodemailer
+pnpm add nodemailer imapflow
+pnpm add -D @types/nodemailer
 ```
 
 ## 1. Sending Outbound Email
@@ -195,8 +195,8 @@ export async function replyToEmail(original: InboundEmail, replyText: string) {
 Use `better-sqlite3` to track which emails have been processed and prevent double-replies.
 
 ```bash
-npm install better-sqlite3
-npm install --save-dev @types/better-sqlite3
+pnpm add better-sqlite3
+pnpm add -D @types/better-sqlite3
 ```
 
 ```typescript

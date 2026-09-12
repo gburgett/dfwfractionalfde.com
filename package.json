@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "npm run db:sync-case-studies && npm run db:sync-packages && astro build",
+    "build": "pnpm run db:sync-case-studies && pnpm run db:sync-packages && astro build",
     "preview": "node ./dist/server/entry.mjs",
     "deploy": "bash scripts/deploy.sh",
     "astro": "astro",
@@ -38,5 +38,16 @@
     "@types/nodemailer": "^8.0.1",
     "gray-matter": "^4.0.3",
     "tsx": "^4.22.4"
+  },
+  "packageManager": "pnpm@10.34.3",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "better-sqlite3",
+      "esbuild",
+      "sharp",
+      "koffi",
+      "protobufjs",
+      "@google/genai"
+    ]
   }
 }

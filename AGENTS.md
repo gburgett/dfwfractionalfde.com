@@ -5,10 +5,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev       # dev server at http://localhost:4321 (or https://dfwfractionalfde.exe.xyz via proxy)
-npm run build     # build to dist/ (static pages + Node server bundle)
-npm run preview   # serve the built site: node ./dist/server/entry.mjs
-npm run deploy    # build + restart production server (writes PID to .server.pid, logs to server.log)
+pnpm run dev       # dev server at http://localhost:4321 (or https://dfwfractionalfde.exe.xyz via proxy)
+pnpm run build     # build to dist/ (static pages + Node server bundle)
+pnpm run preview   # serve the built site: node ./dist/server/entry.mjs
+pnpm run deploy    # build + restart production server (writes PID to .server.pid, logs to server.log)
 ```
 
 ## Architecture

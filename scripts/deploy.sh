@@ -9,7 +9,7 @@ LOG_FILE="server.log"
 
 # Build the site
 echo "[deploy] Building Astro site..."
-npm run build
+pnpm run build
 
 # Stop the existing server
 echo "[deploy] Stopping old server..."

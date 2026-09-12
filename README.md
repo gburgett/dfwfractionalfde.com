@@ -20,15 +20,15 @@ Dallas–Fort Worth. Built with [Astro](https://docs.astro.build). Hosted at
 ## Develop
 
 ```bash
-npm install
-npm run dev        # http://localhost:4321
+pnpm install
+pnpm run dev        # http://localhost:4321
 ```
 
 ## Build & run
 
 ```bash
-npm run build      # outputs dist/ (static pages + Node server for the two form endpoints)
-npm run preview    # serves the built site: node ./dist/server/entry.mjs
+pnpm run build      # outputs dist/ (static pages + Node server for the two form endpoints)
+pnpm run preview    # serves the built site: node ./dist/server/entry.mjs
 ```
 
 The site is **static-first**. Only two routes are rendered on demand:
@@ -65,7 +65,7 @@ Edit `src/data/posts.ts`. Each entry links back to the canonical post on
 ## Updating fixed-price packages
 
 Edit `src/data/packages.ts` — it's the single source of truth for both the
-homepage "Fixed price" rail and the agent DB import. `npm run build` runs
+homepage "Fixed price" rail and the agent DB import. `pnpm run build` runs
 `db:sync-packages`, which upserts each package (by `slug`) into the agent
 SQLite DB with an embedding so Daneel can search and cite them in lead
 follow-ups. Removing a package from the file prunes it from the DB on the
