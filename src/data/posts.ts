@@ -1,4 +1,5 @@
 // Content syndicated from Gordon Burgett's personal site (gordonburgett.net).
+// Case studies live in src/content/caseStudies/ — see src/lib/case-studies.ts.
 // Curated to the engineering / AI work that's most relevant to prospective clients.
 export type Post = {
   title: string;
@@ -8,36 +9,6 @@ export type Post = {
   summary: string;
   tags?: string[];
 };
-
-export const caseStudies: Post[] = [
-  {
-    title: 'Building an AI Voice Receptionist for ServPro',
-    url: '/case-studies/2026-08-28-servpro-voice-agent/',
-    date: '2026-08-28',
-    kind: 'Case Study',
-    summary:
-      'Designing a genuinely helpful AI inbound voice agent for a ServPro franchisee — one that triages calls, escalates emergencies to on-call staff, and knows when to hand off to a human, for about $0.07/minute.',
-    tags: ['case-study'],
-  },
-  {
-    title: 'Building Alice, an Empowering AI Agent',
-    url: '/case-studies/2026-03-18-building-alice/',
-    date: '2026-03-18',
-    kind: 'Case Study',
-    summary:
-      'What it looks like to build AI agents that actually empower people instead of just "augmenting" them — built for HealthShare Technology Solutions.',
-    tags: ['case-study'],
-  },
-  {
-    title: 'Building an Unstructured Data Import',
-    url: '/case-studies/2024-11-16-unstructured-data-import/',
-    date: '2024-11-16',
-    kind: 'Case Study',
-    summary:
-      'Sometimes the hardest question is not how to apply a new technology, but when not to. A pragmatic case study on knowing where AI helps and where it hurts.',
-    tags: ['case-study'],
-  },
-];
 
 export const articles: Post[] = [
   {
@@ -135,11 +106,3 @@ export const links: Post[] = [
     `,
   },
 ];
-
-function byDateDesc(a: Post, b: Post) {
-  return new Date(b.date).getTime() - new Date(a.date).getTime();
-}
-
-export const posts: Post[] = [...caseStudies, ...articles, ...projects, ...links].sort(
-  byDateDesc
-);

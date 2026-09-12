@@ -178,6 +178,8 @@ hr.rule { border: none; border-top: 1px solid var(--border-soft); margin: 0; }
 .prose h3 { margin-top: 1.8rem; margin-bottom: 0.8rem; font-family: var(--font); }
 .prose ul, .prose ol { margin: 0 0 1rem 1.2rem; padding-left: 1rem; }
 .prose li { margin-bottom: 0.4rem; }
+.prose a { color: var(--brand); text-decoration: underline; text-underline-offset: 0.15em; }
+.prose a:hover { text-decoration-thickness: 2px; }
 .prose blockquote { border-left: 3px solid var(--brand); padding-left: 1rem; margin: 1.2rem 0; color: var(--muted); font-style: italic; }
 .prose img { max-width: 100%; height: auto; border-radius: var(--radius); border: 1px solid var(--border); }
 .prose small { display: block; color: var(--muted-2); font-size: 0.85rem; margin-top: 0.3rem; }

@@ -5,7 +5,7 @@ const caseStudies = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.date(),
-    client: z.string(),
+    client: z.string().optional(),
     hero: z.string().optional(),
     heroAlt: z.string().optional(),
   }),

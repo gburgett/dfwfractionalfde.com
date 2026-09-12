@@ -1,8 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
 import PostCard from '../components/PostCard.astro';
-import { caseStudies, articles, links } from '../data/posts';
+import { articles, links } from '../data/posts';
+import { getCaseStudyPosts } from '../lib/case-studies';
 import { site } from '../data/site';
+
+const caseStudies = await getCaseStudyPosts();
 ---
 <Base title="Insights" description="Case studies and writing on building AI-native software, spec-driven development, and shipping with coding agents.">
   <section class="section section--tight">
