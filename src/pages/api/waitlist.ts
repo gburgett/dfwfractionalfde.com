@@ -31,14 +31,18 @@ export const POST: APIRoute = async ({ request, redirect }) => {
   // Honeypot: real users never fill this hidden field.
   if (fields.company_website) return redirect('/thank-you/?type=waitlist', 303);
 
+  // Turnstile is advisory, not a gate: the widget can fail to produce a token
+  // on some devices (notably iOS Safari hitting a Cloudflare-side glitch), and
+  // a lost lead is worse than the occasional bot slipping past the honeypot.
   const turnToken = fields['cf-turnstile-response'];
+  let turnstileVerified = 'skipped';
   if (!turnToken) {
     console.error('[turnstile] missing token in submission (widget likely never rendered), UA:', request.headers.get('user-agent'));
-    return redirect('/waitlist/?error=1', 303);
-  }
-  if (!(await verifyTurnstile(turnToken))) {
+  } else if (await verifyTurnstile(turnToken)) {
+    turnstileVerified = 'true';
+  } else {
     console.error('[turnstile] token rejected, UA:', request.headers.get('user-agent'));
-    return redirect('/waitlist/?error=1', 303);
+    turnstileVerified = 'false';
   }
 
   if (!fields.name || !isEmail(fields.email)) {
@@ -54,6 +58,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     budget: fields.budget || '',
     message: fields.message || '',
     source: fields.source || '',
+    turnstileVerified,
   });
 
   return redirect('/thank-you/?type=waitlist', 303);

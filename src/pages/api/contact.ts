@@ -30,15 +30,18 @@ export const POST: APIRoute = async ({ request, redirect }) => {
 
   if (fields.company_website) return redirect('/thank-you/?type=contact', 303);
 
-  // Verify Turnstile CAPTCHA
+  // Turnstile is advisory, not a gate: the widget can fail to produce a token
+  // on some devices (notably iOS Safari hitting a Cloudflare-side glitch), and
+  // a lost lead is worse than the occasional bot slipping past the honeypot.
   const turnToken = fields['cf-turnstile-response'];
+  let turnstileVerified = 'skipped';
   if (!turnToken) {
     console.error('[turnstile] missing token in submission (widget likely never rendered), UA:', request.headers.get('user-agent'));
-    return redirect('/contact/?error=1', 303);
-  }
-  if (!(await verifyTurnstile(turnToken))) {
+  } else if (await verifyTurnstile(turnToken)) {
+    turnstileVerified = 'true';
+  } else {
     console.error('[turnstile] token rejected, UA:', request.headers.get('user-agent'));
-    return redirect('/contact/?error=1', 303);
+    turnstileVerified = 'false';
   }
 
   if (!fields.name || !isEmail(fields.email) || !fields.message) {
@@ -52,6 +55,7 @@ export const POST: APIRoute = async ({ request, redirect }) => {
     topic: fields.topic || 'general',
     budget: fields.budget || '',
     message: fields.message,
+    turnstileVerified,
   });
 
   return redirect('/thank-you/?type=contact', 303);
