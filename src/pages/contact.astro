@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import { site } from '../data/site';
+import { env } from '../lib/env';
 import { getCollection } from 'astro:content';
 
 const packagePrefill = Object.fromEntries(
@@ -64,6 +65,11 @@ const full = site.openClients <= 0;
           <span class="hint">The more detail you share, the tighter the fixed price I can quote.</span>
         </div>
 
+        <div class="field" style="margin:16px 0">
+          <div id="turnstile-widget" data-sitekey={env.TURNSTILE_SITE_KEY}></div>
+          <input type="hidden" name="cf-turnstile-response" id="turnstile-response" />
+        </div>
+
         <button class="btn btn--primary" type="submit" style="width:100%">Request a bid →</button>
         <p class="muted" style="font-size:0.82rem;margin:14px 0 0">
           Looking for the ongoing subscription instead? <a class="textlink" href="/waitlist/">{full ? 'Join the waitlist →' : 'Start an engagement →'}</a>
@@ -72,6 +78,26 @@ const full = site.openClients <= 0;
     </div>
   </section>
 </Base>
+
+<script is:inline>
+  window.onTurnstileLoad = function () {
+    const widget = document.getElementById('turnstile-widget');
+    if (!widget || typeof turnstile === 'undefined') return;
+    turnstile.render(widget, {
+      sitekey: widget.dataset.sitekey,
+      callback: function (token) {
+        document.getElementById('turnstile-response').value = token;
+      },
+      'error-callback': function () { return true; },   // auto-retry on failure
+      'timeout-callback': function () { return true; }, // auto-retry on timeout
+    });
+  };
+</script>
+
+<script is:inline
+  src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad"
+  async defer
+></script>
 
 <script is:inline define:vars={{ packagePrefill }}>
   const params = new URLSearchParams(location.search);
