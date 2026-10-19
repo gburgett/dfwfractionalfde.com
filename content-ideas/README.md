@@ -63,10 +63,12 @@ Open questions, what to leave out, checks to do before posting.
 | `confidentiality` | `public-ok` or `needs-gordon-ok` |
 | `created` | Date the note was added (`YYYY-MM-DD`) |
 
-`needs-gordon-ok` means the idea draws on private work. Do not post it until Gordon has said the draft is safe. `public-ok` means the source is already public (for example the [kroger-mealplanner](https://github.com/gburgett/kroger-mealplanner) repo) and the note stays inside that public material.
+`needs-gordon-ok` means the idea draws on private work. Do not post it until Gordon has said the draft is safe. `public-ok` means either the source is already public (for example the [kroger-mealplanner](https://github.com/gburgett/kroger-mealplanner) repo) and the note stays inside that public material, or the lesson can be told with no client, employer, vendor, or metric attached. If a draft needs any of those, switch it to `needs-gordon-ok`.
 
 ## What never goes in a note
 
 No specific security findings, infrastructure details, IP addresses, PHI examples, client or employer names, or private metrics. Describe the principle or the owner-facing lesson, not the engagement.
+
+The AMS evaluation notes follow two extra naming rules. Never name the client agency, and never name the legacy vendor. Employee Navigator may be named as the benefits-admin integration when the agency stays unnamed. Any note that names Zywave is `needs-gordon-ok`.
 
 When a post needs a real knowledgebase or CRM story, use the placeholder note and wait for an anonymized version from Gordon. Do not invent one.
