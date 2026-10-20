@@ -3,7 +3,7 @@ title: "Building an Unstructured Data Import"
 description: "Case study: knowing when to apply AI and when not to. A pragmatic look at building a data import pipeline for community resources."
 date: 2024-11-16
 client: "Neighbor Solutions"
-hero: "/neighbor-solutions-hero.webp"
+hero: "../../assets/neighbor-solutions-hero.webp"
 heroAlt: "The Neighbor Solutions app: a list of community-resource reports beside a detail panel and a map of Dallas dotted with resource locations."
 ---
 

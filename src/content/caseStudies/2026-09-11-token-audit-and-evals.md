@@ -2,7 +2,7 @@
 title: "How do you know your AI is still working?"
 description: "Engineering observability and continuous evaluation into AI projects"
 date: 2026-09-11
-hero: "/langfuse-openai-agent-example-trace-handoff.png"
+hero: "../../assets/langfuse-openai-agent-example-trace-handoff.png"
 heroAlt: "Example of an Agent trace using Langfuse."
 ---
 

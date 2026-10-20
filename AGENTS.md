@@ -27,5 +27,7 @@ Contact (`src/pages/contact.astro`) and waitlist (`src/pages/waitlist.astro`) fo
 | `src/content/packages/` | Fixed-price packages as Markdown: frontmatter (structured card data, FAQs) powers the homepage "Fixed price" rail and package landing pages. Filename = slug — keep it stable |
 | `src/content/caseStudies/` | Markdown case studies rendered via `src/pages/case-studies/[slug].astro` using Astro content collections |
 | `public/CNAME` | GitHub Pages custom domain (`dfwfractionalfde.com`) |
+| `public/llms.txt` | Short plain-language summary for answer engines |
+| `src/layouts/Base.astro` | Default title, description, Open Graph, and site-wide JSON-LD |
 
 Prices are not published on the site.

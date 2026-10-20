@@ -4,6 +4,8 @@ import PostCard from '../components/PostCard.astro';
 import { site } from '../data/site';
 import { getCaseStudyPosts } from '../lib/case-studies';
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import headshot from '../assets/headshot.jpg';
 
 // Fixed-price packages, ordered by their frontmatter `order` field.
 const packages = (await getCollection('packages'))
@@ -22,6 +24,7 @@ const full = site.openClients <= 0;
       <div class="hero-copy">
         <p class="eyebrow eyebrow--accent hero-kicker">{site.region} · Fractional · On-site</p>
         <h1>An AI-native software engineer, forward deployed into your business.</h1>
+        <p class="lead">I'm a fractional AI engineer in Dallas–Fort Worth for small and mid-sized businesses with little or no IT, including ones whose IT provider isn't helping with AI.</p>
         <p class="lead">
           You want to integrate AI into your business.  Your team may already be using it to speed up their own workflows.
           But you feel like you're missing the best that AI has to offer: transformative capabilities executing in a governed, auditable environment.
@@ -76,10 +79,6 @@ const full = site.openClients <= 0;
           <a class="textlink" href="/about/">Meet your engineer →</a>
         </p>
       </div>
-      <!-- <figure class="fde-figure">
-        <img src="/highlight.jpg" alt="Working on-site, embedded with a client's team" loading="lazy" width="1200" height="900" />
-        <figcaption>On-site with a client team · {site.region}</figcaption>
-      </figure> -->
     </div>
   </section>
 
@@ -91,7 +90,7 @@ const full = site.openClients <= 0;
         <a class="textlink" href={site.owner.personalSite} target="_blank" rel="noopener">gordonburgett.net ↗</a>
       </div>
       <div class="engineer">
-        <img class="engineer-photo" src={site.owner.headshot} alt="Gordon Burgett" loading="lazy" width="240" height="300" />
+        <Image class="engineer-photo" src={headshot} alt="Gordon Burgett" widths={[200, 400]} sizes="200px" format="webp" loading="lazy" />
         <div class="engineer-body">
           <h2 class="serif-head">You're not hiring a firm. You're hiring me.</h2>
           <p>
@@ -169,7 +168,7 @@ const full = site.openClients <= 0;
         {packages.map((pkg) => (
           <article class="svc-card">
             <div class="svc-media">
-              <img src={pkg.image} alt={pkg.imageAlt} loading="lazy" />
+              <Image src={pkg.image} alt={pkg.imageAlt} widths={[420, 840]} sizes="420px" format="webp" loading="lazy" />
             </div>
             <div class="svc-body">
               <div class="svc-head">

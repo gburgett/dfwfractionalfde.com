@@ -7,11 +7,56 @@ import { site } from '../data/site';
 interface Props {
   title?: string;
   description?: string;
+  /** e.g. "noindex" for pages that should stay out of search results. */
+  robots?: string;
+  ogType?: string;
 }
-const { title, description } = Astro.props;
-const fullTitle = title ? `${title} · ${site.name}` : `${site.name} · ${site.brand}`;
+const { title, description, robots, ogType = 'website' } = Astro.props;
+const fullTitle = title ? `${title} · ${site.name}` : `${site.title} · ${site.name}`;
 const desc = description ?? site.tagline;
 const canonical = new URL(Astro.url.pathname, site.url).href;
+const ogImage = new URL('/og.png', site.url).href;
+const ogImageAlt = `${site.title}. ${site.name}.`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': ['Organization', 'ProfessionalService'],
+      '@id': new URL('/#organization', site.url).href,
+      name: site.name,
+      url: site.url,
+      description: site.tagline,
+      image: ogImage,
+      areaServed: {
+        '@type': 'AdministrativeArea',
+        name: site.region,
+      },
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Dallas',
+        addressRegion: 'TX',
+        addressCountry: 'US',
+      },
+      founder: { '@id': new URL('/#gordon', site.url).href },
+    },
+    {
+      '@type': 'Person',
+      '@id': new URL('/#gordon', site.url).href,
+      name: site.owner.name,
+      jobTitle: 'Fractional AI Engineer',
+      url: new URL('/about/', site.url).href,
+      sameAs: [site.owner.personalSite],
+      worksFor: { '@id': new URL('/#organization', site.url).href },
+      address: {
+        '@type': 'PostalAddress',
+        addressLocality: 'Dallas',
+        addressRegion: 'TX',
+        addressCountry: 'US',
+      },
+    },
+  ],
+};
 ---
 <!doctype html>
 <html lang="en">
@@ -21,21 +66,24 @@ const canonical = new URL(Astro.url.pathname, site.url).href;
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>{fullTitle}</title>
     <meta name="description" content={desc} />
+    {robots && <meta name="robots" content={robots} />}
     <link rel="canonical" href={canonical} />
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:locale" content="en_US" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={desc} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={ogImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
-    <link
-      rel="preconnect"
-      href="https://fonts.googleapis.com"
-    />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap"
-      rel="stylesheet"
-    />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={desc} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content={ogImageAlt} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <script is:inline>
       (function () {
         try {

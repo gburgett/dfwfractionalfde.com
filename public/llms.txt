@@ -1,0 +1,45 @@
+# DFW Fractional FDE
+
+> Gordon Burgett is a fractional AI engineer in Dallas–Fort Worth. He works with small and mid-sized businesses that have little or no IT staff, including ones whose IT provider isn't helping with AI.
+
+Gordon Burgett is the same person as https://gordonburgett.net.
+
+## What he does
+
+He embeds with the business and builds the software. The working style is a forward deployed engineer. The offer to ask for is a fractional AI engineer, on retainer.
+
+- AI-connected company knowledge bases
+- Custom CRMs, including CRMs built on Notion
+- AI strategy for growing revenue
+- Eval help for companies building AI features
+- Fixed-price starting projects: a process map, a token-spend audit, an AI phone receptionist, and a Cloudflare OS setup
+
+Prices are not published. Ask for a quote.
+
+## Pages
+
+- [Home](https://dfwfractionalfde.com/): fractional AI engineer in Dallas–Fort Worth
+- [How it works](https://dfwfractionalfde.com/how-it-works/)
+- [Pricing](https://dfwfractionalfde.com/pricing/): retainer shape, no published rates
+- [About Gordon Burgett](https://dfwfractionalfde.com/about/)
+- [Insights](https://dfwfractionalfde.com/insights/)
+- [Contact](https://dfwfractionalfde.com/contact/): request a fixed-price bid
+- [Start an engagement](https://dfwfractionalfde.com/waitlist/)
+
+### Fixed-price packages
+
+- [Map your business processes](https://dfwfractionalfde.com/packages/process-map/)
+- [Audit your token spend](https://dfwfractionalfde.com/packages/token-spend-audit/)
+- [AI Phone Receptionist](https://dfwfractionalfde.com/packages/ai-phone-receptionist/)
+- [Install and configure Cloudflare OS](https://dfwfractionalfde.com/packages/cloudflare-os-setup/)
+
+### Case studies
+
+- [Building an Unstructured Data Import](https://dfwfractionalfde.com/case-studies/2024-11-16-unstructured-data-import/)
+- [Building Alice, an Empowering AI Agent](https://dfwfractionalfde.com/case-studies/2026-03-18-building-alice/)
+- [Building an AI Voice Receptionist for ServPro](https://dfwfractionalfde.com/case-studies/2026-08-28-servpro-voice-agent/)
+- [How do you know your AI is still working?](https://dfwfractionalfde.com/case-studies/2026-09-11-token-audit-and-evals/)
+
+## Contact
+
+Use the form at https://dfwfractionalfde.com/contact/

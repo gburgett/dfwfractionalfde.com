@@ -3,7 +3,7 @@ order: 3
 name: "AI Phone Receptionist"
 price: "$9,250"
 term: "fixed · 2-4 weeks"
-image: "/servpro-agent-conversation.png"
+image: "../../assets/servpro-agent-conversation.png"
 imageAlt: "Transcript of a caller talking with the ServPro AI voice agent"
 blurb: "Genuinely helpful AI inbound voice receptionist handling first-layer or after-hours support. Routes inbound calls better than an IVR tree, handles simple message-taking tasks, and escalates to human support."
 features:

@@ -3,7 +3,7 @@ order: 2
 name: "Audit your token spend"
 price: "$4,750"
 term: "fixed · 1 week"
-image: "/eyestetix-studio-zvbPbSz5BFo-unsplash.jpg"
+image: "../../assets/eyestetix-studio-zvbPbSz5BFo-unsplash.jpg"
 imageAlt: "A descending red bar chart with a downward arrow, representing falling token costs"
 blurb: "I install observability into your AI agents and hand you a report on exactly where your tokens go — plus specific, costed changes to cut spend and put a ceiling on it."
 features:

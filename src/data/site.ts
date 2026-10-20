@@ -4,14 +4,14 @@ export const site = {
   domain: 'dfwfractionalfde.com',
   url: 'https://dfwfractionalfde.com',
   region: 'Dallas–Fort Worth',
+  title: 'Fractional AI Engineer in Dallas–Fort Worth',
   tagline:
-    'A senior engineer embedded in your business — building, shipping, and deploying AI-native software, on-site in DFW.',
+    "A fractional AI engineer in Dallas–Fort Worth for small and mid-sized businesses with little or no IT, including ones whose IT provider isn't helping with AI.",
   owner: {
     name: 'Gordon Burgett',
     role: 'Director of Software Engineering',
     altRole: 'Director, HealthShare Technology Solutions',
     personalSite: 'https://gordonburgett.net',
-    headshot: 'https://gordonburgett.net/images/headshot.jpg',
   },
   // Availability — set openClients to 0 for waitlist-only mode, or a positive
   // number when actively accepting new engagements. The number itself is

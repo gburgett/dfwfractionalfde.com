@@ -3,7 +3,7 @@ order: 1
 name: "Map your business processes"
 price: "$4,750"
 term: "fixed · 3 days onsite"
-image: "/data-flow-diagram.webp"
+image: "../../assets/data-flow-diagram.webp"
 imageAlt: "Annotated diagram of data moving between business systems"
 blurb: "I sit with your team and find where AI could really help. You get a report with specific opportunities and actionable solutions."
 features:
