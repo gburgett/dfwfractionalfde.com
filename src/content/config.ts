@@ -1,18 +1,18 @@
 import { defineCollection, z } from 'astro:content';
 
 const caseStudies = defineCollection({
-  schema: z.object({
+  schema: ({ image }) => z.object({
     title: z.string(),
     description: z.string(),
     date: z.date(),
     client: z.string().optional(),
-    hero: z.string().optional(),
+    hero: image().optional(),
     heroAlt: z.string().optional(),
   }),
 });
 
 const packages = defineCollection({
-  schema: z.object({
+  schema: ({ image }) => z.object({
     /** Controls display order on the homepage rail (lower = first). */
     order: z.number(),
     name: z.string(),
@@ -20,7 +20,7 @@ const packages = defineCollection({
     price: z.string(),
     /** Short terms line, e.g. "fixed · 3 days onsite". */
     term: z.string(),
-    image: z.string(),
+    image: image(),
     imageAlt: z.string(),
     /** Plain-text description (no markup) shown on the homepage card and detail page. */
     blurb: z.string(),

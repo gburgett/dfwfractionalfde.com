@@ -1,6 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import { site } from '../data/site';
+import { Image } from 'astro:assets';
+import headshot from '../assets/headshot.jpg';
 
 const full = site.openClients <= 0;
 
@@ -36,7 +38,7 @@ const focus = [
           </div>
         </div>
         <div class="portrait">
-          <img src={site.owner.headshot} alt="Gordon Burgett" loading="lazy" width="320" height="320" />
+          <Image src={headshot} alt="Gordon Burgett" widths={[320, 640]} sizes="320px" format="webp" loading="lazy" />
         </div>
       </div>
     </div>

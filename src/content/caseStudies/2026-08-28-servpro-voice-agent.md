@@ -3,7 +3,7 @@ title: "Building an AI Voice Receptionist for ServPro"
 description: "Case study: designing a genuinely helpful AI inbound voice agent that routes calls, takes messages, and knows when to escalate to a human."
 date: 2026-08-28
 client: "ServPro"
-hero: "/servpro-workflow.png"
+hero: "../../assets/servpro-workflow.png"
 heroAlt: "The ServPro voice agent's call flow: a greeting node branches through intent classification into new/existing job, employment, and spam paths."
 ---
 
@@ -31,7 +31,7 @@ resulted in significantly greater accuracy.
 We added LLM-enforced guardrails, including instructions to prevent the agent from promising that the information was recorded unless the HTTP POST was successful.  Rigorous adversarial testing ensured that the agent stuck to the guardrails and
 properly followed the workflow.
 
-![Test suite](/servpro-agent-test-suite.png)
+![Test suite](../../assets/servpro-agent-test-suite.png)
 
 ## What ServPro owns
 

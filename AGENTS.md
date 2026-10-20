@@ -5,20 +5,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-pnpm run dev       # dev server at http://localhost:4321 (or https://dfwfractionalfde.exe.xyz via proxy)
-pnpm run build     # build to dist/ (static pages + Node server bundle)
-pnpm run preview   # serve the built site: node ./dist/server/entry.mjs
-pnpm run deploy    # build + restart production server (writes PID to .server.pid, logs to server.log)
+pnpm run dev       # dev server at http://localhost:4321
+pnpm run build     # static build to dist/
+pnpm run preview   # serve the built site locally
 ```
+
+Pushing to `main` deploys via GitHub Actions (`.github/workflows/pages.yml`) to GitHub Pages.
 
 ## Architecture
 
-Static-first Astro site (`output: 'static'`) using the `@astrojs/node` standalone adapter. Every page is prerendered **except** the two API routes, which opt out with `export const prerender = false`:
+Fully static Astro site (`output: 'static'`, `trailingSlash: 'always'`). There is no server, adapter, or API route. `src/pages/404.astro` builds to `dist/404.html`, which GitHub Pages uses as the custom 404.
 
-- `src/pages/api/waitlist.ts` — waitlist form handler
-- `src/pages/api/contact.ts` — contact/bid request handler
-
-Both endpoints share the same pattern: honeypot check (`company_website` field) → field validation → `saveSubmission()` → redirect to `/thank-you/`.
+Contact (`src/pages/contact.astro`) and waitlist (`src/pages/waitlist.astro`) forms POST to Web3Forms. Each form has a `botcheck` honeypot checkbox. A small script sets the redirect to `${location.origin}/thank-you/?type=contact` or `?type=waitlist`.
 
 ### Key files to know
 
@@ -26,18 +24,10 @@ Both endpoints share the same pattern: honeypot check (`company_website` field) 
 |------|---------|
 | `src/data/site.ts` | Site-wide config: `openClients` controls the availability badge; set `openClients: 0` for waitlist-only mode |
 | `src/data/posts.ts` | Syndicated insights list (links back to gordonburgett.net) |
-| `src/content/packages/` | Fixed-price packages as Markdown: frontmatter (structured card data, FAQs) powers the homepage "Fixed price" rail and package landing pages; the body renders on detail pages and feeds the agent DB import (`scripts/sync-packages.ts`) so Daneel can cite them. Filename = slug — keep it stable |
+| `src/content/packages/` | Fixed-price packages as Markdown: frontmatter (structured card data, FAQs) powers the homepage "Fixed price" rail and package landing pages. Filename = slug — keep it stable |
 | `src/content/caseStudies/` | Markdown case studies rendered via `src/pages/case-studies/[slug].astro` using Astro content collections |
-| `src/lib/submissions.ts` | Form persistence: appends JSONL to `./submissions/<type>.jsonl` and optionally POSTs to `SUBMISSIONS_WEBHOOK` |
+| `public/CNAME` | GitHub Pages custom domain (`dfwfractionalfde.com`) |
+| `public/llms.txt` | Short plain-language summary for answer engines |
+| `src/layouts/Base.astro` | Default title, description, Open Graph, and site-wide JSON-LD |
 
-### Environment variables (production)
-
-| Variable | Default | Purpose |
-|----------|---------|---------|
-| `SUBMISSIONS_DIR` | `./submissions` | Directory for JSONL files |
-| `SUBMISSIONS_WEBHOOK` | — | URL to POST each submission to (Slack, Make, Zapier, etc.) |
-| `HOST` / `PORT` | `localhost:4321` | Node server bind address |
-
-### `security.checkOrigin` is disabled
-
-The Astro origin check is off in `astro.config.mjs` to avoid 403s from reverse-proxy `Host`/`X-Forwarded-Proto` mismatches. Spam mitigation relies solely on the honeypot field; add a CAPTCHA if spam becomes a problem.
+Prices are not published on the site.

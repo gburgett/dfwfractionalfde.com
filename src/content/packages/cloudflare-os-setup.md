@@ -3,7 +3,7 @@ order: 4
 name: "Install & configure Cloudflare OS"
 price: "$3,950"
 term: "fixed · 1 week"
-image: "/cloudflare-os-card-2.png"
+image: "../../assets/cloudflare-os-card-2.png"
 imageAlt: "Cloudflare OS analytics dashboard"
 blurb: "The new AI-native business operating system. Cloudflare OS enables your entire team to build tools and integrations, automate processes, and collaborate on skills. I deploy it into your Cloudflare tenant and configure governance rules, audit trails, and spend limits."
 features:

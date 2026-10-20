@@ -1,21 +1,21 @@
 # DFW Fractional FDE
 
-Marketing + waitlist site for **Gordon Burgett — Fractional Forward Deployed Engineer** serving
-Dallas–Fort Worth. Built with [Astro](https://docs.astro.build). Hosted at
-**https://dfwfractionalfde.com**.
+Marketing site for **Gordon Burgett**, a fractional AI engineer serving Dallas–Fort Worth.
+Built with [Astro](https://docs.astro.build) as a fully static site and hosted on
+GitHub Pages at **https://dfwfractionalfde.com**.
 
 ## What's here
 
 | Page | Purpose |
 |------|---------|
-| `/` | Hero, the "Fractional FDE" positioning, capabilities, how-it-works teaser, syndicated insights |
+| `/` | Hero, how the engagement works, fixed-price packages, case studies |
 | `/how-it-works/` | The engagement model, on-site → embed → ship → maintenance |
-| `/pricing/` | Three panes — **Maintenance only ($999/mo, ≤6 hrs)**, **Subscription ($6,995/mo, featured)**, **Project bid (fixed price)** |
-| `/about/` | Bio, capabilities, and tech stack pulled from gordonburgett.net |
-| `/insights/` | Articles & projects syndicated from gordonburgett.net |
-| `/waitlist/` | Waitlist signup form (currently the only way in — waitlist-only) |
+| `/pricing/` | Subscription, maintenance, and fixed-price project bids. No prices published |
+| `/about/` | Bio and background |
+| `/insights/` | Case studies and writing syndicated from gordonburgett.net |
+| `/waitlist/` | Start an engagement, or join the waitlist when the practice is full |
 | `/contact/` | Firm fixed-price project bid request / maintenance enquiry |
-| `/thank-you/` | Post-submit confirmation |
+| `/thank-you/` | Post-submit confirmation (not indexed) |
 
 ## Develop
 
@@ -24,32 +24,32 @@ pnpm install
 pnpm run dev        # http://localhost:4321
 ```
 
-## Build & run
+## Build
 
 ```bash
-pnpm run build      # outputs dist/ (static pages + Node server for the two form endpoints)
-pnpm run preview    # serves the built site: node ./dist/server/entry.mjs
+pnpm run build      # static files in dist/
+pnpm run preview    # serve dist/ locally
 ```
 
-The site is **static-first**. Only two routes are rendered on demand:
-`/api/waitlist` and `/api/contact`. They are served by the bundled Node server
-(`@astrojs/node`, standalone). Run it behind your reverse proxy / process manager.
+Pages are built with trailing slashes (`/about/` → `dist/about/index.html`).
+`src/pages/404.astro` becomes `dist/404.html`.
 
-## Where signups go
+## Deploy
 
-Form submissions are appended as JSON Lines to `./submissions/waitlist.jsonl` and
-`./submissions/contact.jsonl`. Configure delivery with environment variables:
+Pushing to `main` runs `.github/workflows/pages.yml`, which builds the site and
+deploys `dist/` to GitHub Pages. In the repo settings, Pages source must be
+**GitHub Actions**. `public/CNAME` sets the custom domain.
 
-| Variable | Purpose |
-|----------|---------|
-| `SUBMISSIONS_DIR` | Directory for the JSONL files (default `./submissions`) |
-| `SUBMISSIONS_WEBHOOK` | Optional URL each submission is also POSTed to (Slack / Make / Zapier / inbox-as-a-service) |
-| `HOST` / `PORT` | Bind address for the Node server (default `localhost:4321`) |
+The repository has to be public, or on a plan that includes GitHub Pages for private repos.
 
-Each form includes a hidden honeypot field (`company_website`); submissions that fill
-it are silently accepted but never stored.
+## Forms
 
-## Updating availability & capacity
+Contact and waitlist forms POST to [Web3Forms](https://web3forms.com). They share one
+access key and a `botcheck` honeypot. After a successful submit, Web3Forms redirects
+to `/thank-you/?type=contact` or `/thank-you/?type=waitlist` on the host that served
+the page.
+
+## Updating availability
 
 Edit `src/data/site.ts`:
 
@@ -60,19 +60,9 @@ Edit `src/data/site.ts`:
 ## Updating syndicated content
 
 Edit `src/data/posts.ts`. Each entry links back to the canonical post on
-`https://www.gordonburgett.net`.
+`https://gordonburgett.net`.
 
 ## Updating fixed-price packages
 
-Edit `src/data/packages.ts` — it's the single source of truth for both the
-homepage "Fixed price" rail and the agent DB import. `pnpm run build` runs
-`db:sync-packages`, which upserts each package (by `slug`) into the agent
-SQLite DB with an embedding so Daneel can search and cite them in lead
-follow-ups. Removing a package from the file prunes it from the DB on the
-next build.
-
-## Notes
-
-- `security.checkOrigin` is disabled in `astro.config.mjs` so the same-origin forms
-  work regardless of how the reverse proxy forwards `Host`/`X-Forwarded-Proto`.
-  Spam is mitigated with the honeypot; add a CAPTCHA later if needed.
+Edit the Markdown files in `src/content/packages/`. Frontmatter drives the homepage
+rail and each package page. The filename is the URL slug — keep it stable.

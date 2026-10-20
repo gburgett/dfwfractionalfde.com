@@ -4,19 +4,8 @@ dist/
 .astro/
 # deps
 node_modules/
-# runtime form submissions (contains PII — never commit)
-submissions/
 # env
 .env
 .env.*
 # os
 .DS_Store
-
-server.pid
-server.log
-.server.pid
-
-logs/
-server.log
-# agent SQLite DB dir (DB_DIR default ./data) — not src/data/
-/data/
