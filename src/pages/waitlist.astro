@@ -2,9 +2,11 @@
 import Base from '../layouts/Base.astro';
 import Availability from '../components/Availability.astro';
 import { site } from '../data/site';
-import { env } from '../lib/env';
 
 const full = site.openClients <= 0;
+const subject = full
+  ? 'New waitlist signup from dfwfractionalfde.com'
+  : 'New engagement request from dfwfractionalfde.com';
 ---
 <Base
   title={full ? 'Join the waitlist' : 'Start an engagement'}
@@ -23,12 +25,12 @@ const full = site.openClients <= 0;
       </p>
       <Availability />
 
-      <div id="error" class="notice notice--warn" style="margin-top:22px; display:none">
-        Please add your name and a valid email so I can reach you.
-      </div>
-
-      <form class="form card" method="POST" action="/api/waitlist">
-        <input type="text" name="company_website" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" />
+      <form class="form card" method="POST" action="https://api.web3forms.com/submit">
+        <input type="hidden" name="access_key" value="20863029-453d-48f2-a6db-dc6673420bbd" />
+        <input type="hidden" name="subject" value={subject} />
+        <input type="hidden" name="from_name" value="DFW Fractional FDE" />
+        <input type="hidden" name="redirect" id="redirect" value="https://dfwfractionalfde.com/thank-you/?type=waitlist" />
+        <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" />
 
         <div class="two">
           <div class="field">
@@ -85,11 +87,6 @@ const full = site.openClients <= 0;
           <input id="source" name="source" />
         </div>
 
-        <div class="field" style="margin:16px 0">
-          <div id="turnstile-widget" data-sitekey={env.TURNSTILE_SITE_KEY}></div>
-          <input type="hidden" name="cf-turnstile-response" id="turnstile-response" />
-        </div>
-
         <button class="btn btn--primary" type="submit" style="width:100%">{full ? 'Join the waitlist →' : 'Start an engagement →'}</button>
         <p class="muted" style="font-size:0.82rem;margin:14px 0 0">
           Prefer to talk about a one-off build instead? <a class="textlink" href="/contact/?topic=project">Request a fixed-price bid →</a>
@@ -100,29 +97,8 @@ const full = site.openClients <= 0;
 </Base>
 
 <script is:inline>
-  window.onTurnstileLoad = function () {
-    const widget = document.getElementById('turnstile-widget');
-    if (!widget || typeof turnstile === 'undefined') return;
-    turnstile.render(widget, {
-      sitekey: widget.dataset.sitekey,
-      callback: function (token) {
-        document.getElementById('turnstile-response').value = token;
-      },
-      'error-callback': function () { return true; },   // auto-retry on failure
-      'timeout-callback': function () { return true; }, // auto-retry on timeout
-    });
-  };
-</script>
-
-<script is:inline
-  src="https://challenges.cloudflare.com/turnstile/v0/api.js?onload=onTurnstileLoad"
-  async defer
-></script>
-
-<script is:inline>
-  if (new URLSearchParams(location.search).get('error')) {
-    document.getElementById('error').style.display = 'block';
-  }
+  // Send Web3Forms back to whichever host served the page (prod, dev proxy, localhost)
+  document.getElementById('redirect').value = `${location.origin}/thank-you/?type=waitlist`;
 </script>
 
 <style>
