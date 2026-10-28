@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { site } from '../data/site';
 
 const asks = [
   ['Client and policy lookups', '"What plan is the Martinez family on, and when does it renew?"'],
@@ -21,7 +22,7 @@ const tiers = [
   {
     kicker: 'Slim Jim',
     title: 'Hybrid',
-    body: "Your book of business stays on the box. The agent thinks with a stronger hosted AI model under a zero-data-retention agreement, so your clients' details aren't kept by the AI provider.",
+    body: "Your book of business stays on the box. Prompts leave the office: the agent thinks with a stronger hosted AI model under a zero-data-retention agreement, so your clients' details aren't kept by the AI provider.",
     points: ['Smaller Mac, lower upfront cost', 'Stronger AI models', 'Zero-data-retention AI provider, set up for client information'],
     accent: true,
   },
@@ -51,11 +52,65 @@ const faqs = [
   ['Do I own it?', "Yes. You buy the Mac and it's yours. It sits in your office, and your data is on it. If you ever stop working with me, the hardware and your data stay with you."],
   ['What happens if the box fails?', 'Every setup includes a local backup, and I help you restore remotely. If you add encrypted offsite backup, you can recover even if the box and the local backup are both lost.'],
 ];
+
+const pageTitle = 'Private AI for Health Insurance Brokers';
+const pageDescription =
+  'Private AI for health insurance brokers and small agencies: an AI back office on a Mac you own. Fully on-device, or hybrid where prompts leave the office.';
+const pageUrl = new URL('/brokers/', site.url).href;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Service',
+      name: pageTitle,
+      description: pageDescription,
+      url: pageUrl,
+      provider: {
+        '@type': 'Organization',
+        '@id': new URL('/#organization', site.url).href,
+        name: site.name,
+        url: site.url,
+      },
+      areaServed: {
+        '@type': 'Country',
+        name: 'United States',
+      },
+      audience: {
+        '@type': 'Audience',
+        audienceType: 'Health insurance brokers',
+      },
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: faqs.map(([question, answer]) => ({
+        '@type': 'Question',
+        name: question,
+        acceptedAnswer: { '@type': 'Answer', text: answer },
+      })),
+    },
+    {
+      '@type': 'BreadcrumbList',
+      itemListElement: [
+        {
+          '@type': 'ListItem',
+          position: 1,
+          name: 'Home',
+          item: new URL('/', site.url).href,
+        },
+        {
+          '@type': 'ListItem',
+          position: 2,
+          name: 'For health insurance brokers',
+          item: pageUrl,
+        },
+      ],
+    },
+  ],
+};
 ---
-<Base
-  title="AI Agency Management for Health Insurance Brokers | An AMS Alternative"
-  description="Everything your AMS does, plus an AI agent that knows your whole book. Agency management for solo health insurance brokers and small brokerages, on a Mac you own, in your office."
->
+<Base title={pageTitle} description={pageDescription}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   <section class="section section--tight">
     <div class="container hero">
       <div>
@@ -108,7 +163,7 @@ const faqs = [
           <div class:list={['card', 'tier', { 'tier--accent': t.accent }]}>
             <div>
               <p class="eyebrow tier-kicker">{t.kicker}</p>
-              <h3 class="tier-title">{t.title}</h3>
+              <h2 class="tier-title">{t.title}</h2>
             </div>
             <p>{t.body}</p>
             <ul class="points">
