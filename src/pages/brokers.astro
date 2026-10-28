@@ -1,0 +1,339 @@
+---
+import Base from '../layouts/Base.astro';
+
+const asks = [
+  ['Client and policy lookups', '"What plan is the Martinez family on, and when does it renew?"'],
+  ['Renewal follow-ups', '"Who renews in the next 60 days that I haven\'t talked to yet?"'],
+  ['Notes and documents', '"Find the call notes where she mentioned switching doctors."'],
+  ['Drafting emails', '"Write a renewal reminder for him. Keep it short." You read it before it goes.'],
+  ['Prep for client calls', '"Summarize everything on the Lees before my two o\'clock."'],
+  ['Carrier portal work', '"What do I need to submit for this enrollment?" It helps, with you in the loop.'],
+];
+
+const tiers = [
+  {
+    kicker: 'The big box',
+    title: 'Fully on-device',
+    body: 'The AI runs on the box itself. Your data and your questions never leave the office.',
+    points: ['Larger Mac, built to run AI models locally', 'Everything stays in your office', 'No AI usage fees'],
+    accent: false,
+  },
+  {
+    kicker: 'Slim Jim',
+    title: 'Hybrid',
+    body: "Your book of business stays on the box. The agent thinks with a stronger hosted AI model under a zero-data-retention agreement, so your clients' details aren't kept by the AI provider.",
+    points: ['Smaller Mac, lower upfront cost', 'Stronger AI models', 'Zero-data-retention AI provider, set up for client information'],
+    accent: true,
+  },
+];
+
+const compare = [
+  ['What you pay for', 'Per seat, every month', 'Hardware you own, no per-seat fees'],
+  ['Where client data lives', "The vendor's cloud", 'On a Mac in your office'],
+  ['Finding things', 'Search screens and reports', 'Ask in plain English, from desk or phone'],
+  ['Renewals and follow-ups', 'You check the list', 'The agent tells you who needs a call'],
+  ['If you stop paying', 'Export and hope', 'The box and your data stay with you'],
+];
+
+const includes = [
+  ['Your book, moved over', 'Connect to the AMS you use today to sync your data'],
+  ['Desktop and Mobile App access', 'Talk to your back office from your desk or from the road.'],
+  ['Local backup', 'Your data is backed up on site from day one.'],
+  ['AI acceptable use policy', 'Legal-reviewed and written for small brokerages, ready to hand to your team.'],
+  ['Getting-started instructions', 'Plain-English guides for you and your staff.'],
+  ['White-glove onboarding', 'We set it up with you and get everyone signed in.'],
+];
+
+const faqs = [
+  ['Does this replace my AMS?', "For most small brokerages, yes. It handles the agency management you rely on your AMS for today — clients, policies, renewals, notes and documents — and adds an AI agent on top. We'll talk through what you use now before you decide."],
+  ['Can I move over from my current AMS?', "Yes. Moving your book over is part of setup. Tell me which AMS you use on the form and I'll confirm how the move works for yours before you buy anything."],
+  ['How does setup work?', "The Mac arrives at your office. Over a screen share, I bring in your book, notes and documents, and get your team signed in. From then on you talk to the agent from your desk or phone, and I'm a call away when something needs adjusting."],
+  ['Do I own it?', "Yes. You buy the Mac and it's yours. It sits in your office, and your data is on it. If you ever stop working with me, the hardware and your data stay with you."],
+  ['What happens if the box fails?', 'Every setup includes a local backup, and I help you restore remotely. If you add encrypted offsite backup, you can recover even if the box and the local backup are both lost.'],
+];
+---
+<Base
+  title="AI Agency Management for Health Insurance Brokers | An AMS Alternative"
+  description="Everything your AMS does, plus an AI agent that knows your whole book. Agency management for solo health insurance brokers and small brokerages, on a Mac you own, in your office."
+>
+  <section class="section section--tight">
+    <div class="container hero">
+      <div>
+        <p class="eyebrow eyebrow--accent">For health insurance brokers</p>
+        <h1 class="hero-title">Your agency's AI back office.</h1>
+        <p class="lead">Everything your AMS holds — clients, policies, renewals, notes — plus an AI agent that knows your whole book. On a Mac you own, in your office.</p>
+        <p class="lead">Ask it things from your desk or your phone. No per-seat fees, and your client data stays with you.</p>
+        <div class="actions">
+          <a class="btn btn--primary" href="#apply">Join the waitlist →</a>
+        </div>
+      </div>
+      <figure class="shot">
+        <div class="shot-frame" role="img" aria-label="Mac mini running an AI agency management system for a health insurance brokerage">
+          <span>Photo of a Mac mini — ideally on an office shelf or desk</span>
+        </div>
+        <figcaption>Your agency management, on a box you own.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section id="what" class="section section--band top-rule">
+    <div class="container split">
+      <p class="eyebrow eyebrow--accent side">What the agent handles</p>
+      <div class="main stack">
+        <h2 class="display">The agency management work that eats your afternoon, handled by something that already knows your book.</h2>
+        <div class="cells">
+          {asks.map(([h, p]) => (
+            <div class="cell">
+              <h3>{h}</h3>
+              <p>{p}</p>
+            </div>
+          ))}
+        </div>
+        <div class="video">
+          <div class="video-box">
+            <span class="play">▶</span>
+            <span class="eyebrow">Short demo video · coming soon</span>
+          </div>
+          <p class="small">A few minutes of a broker asking the agent real questions. I'll post it here once it's recorded.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="versions" class="section">
+    <div class="container stack">
+      <p class="eyebrow eyebrow--accent">Tiers</p>
+      <div class="tiers">
+        {tiers.map((t) => (
+          <div class:list={['card', 'tier', { 'tier--accent': t.accent }]}>
+            <div>
+              <p class="eyebrow tier-kicker">{t.kicker}</p>
+              <h3 class="tier-title">{t.title}</h3>
+            </div>
+            <p>{t.body}</p>
+            <ul class="points">
+              {t.points.map((pt) => <li><span>→</span><span>{pt}</span></li>)}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section id="compare" class="section section--band top-rule-soft">
+    <div class="container split">
+      <p class="eyebrow eyebrow--accent side">AMS alternative</p>
+      <div class="main">
+        <h2 class="display">How it compares to a traditional AMS</h2>
+        <div class="table-wrap card">
+          <div class="table">
+            <span class="th"></span>
+            <span class="th">Traditional AMS</span>
+            <span class="th th--accent">Your AI back office</span>
+            {compare.map(([label, ams, us]) => (
+              <>
+                <span class="td td--label">{label}</span>
+                <span class="td td--ams">{ams}</span>
+                <span class="td td--us">{us}</span>
+              </>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="includes" class="includes">
+    <div class="container split">
+      <p class="eyebrow side">Your box includes</p>
+      <div class="main">
+        <h2>Everything you need on day one</h2>
+        <div class="inc-grid">
+          {includes.map(([h, p]) => (
+            <div class="inc">
+              <h3>{h}</h3>
+              <p>{p}</p>
+            </div>
+          ))}
+        </div>
+        <div class="maint">
+          <span class="eyebrow">Maintenance plan includes</span>
+          <span>Email agent</span>
+          <span>Text agent</span>
+          <span>Voice agent</span>
+          <span>Encrypted offsite backup</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="apply" class="section section--band">
+    <div class="container apply">
+      <div class="apply-copy">
+        <p class="eyebrow eyebrow--accent">Waitlist</p>
+        <h2 class="display">Get on the list. I'll call you.</h2>
+        <p>Setup is hands-on, so I take brokerages in order. Tell me a little about yours and I'll call you personally to talk it through.</p>
+        <p>No spam, no obligation.</p>
+      </div>
+
+      <form class="card apply-form" method="POST" action="https://api.web3forms.com/submit">
+        <input type="hidden" name="access_key" value="20863029-453d-48f2-a6db-dc6673420bbd" />
+        <input type="hidden" name="subject" value="New broker AMS waitlist signup from dfwfractionalfde.com" />
+        <input type="hidden" name="from_name" value="DFW Fractional FDE" />
+        <input type="hidden" name="redirect" id="redirect" value="https://dfwfractionalfde.com/thank-you/?type=waitlist" />
+        <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true" />
+
+        <div class="two">
+          <div class="field">
+            <label for="name">Name *</label>
+            <input id="name" name="name" required autocomplete="name" />
+          </div>
+          <div class="field">
+            <label for="brokerage">Brokerage name *</label>
+            <input id="brokerage" name="brokerage" required autocomplete="organization" />
+          </div>
+          <div class="field">
+            <label for="email">Email *</label>
+            <input id="email" name="email" type="email" required autocomplete="email" />
+          </div>
+          <div class="field">
+            <label for="phone">Phone (optional)</label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel" />
+          </div>
+          <div class="field">
+            <label for="staff">How many people work there?</label>
+            <select id="staff" name="staff">
+              <option value="">Select…</option>
+              <option>Solo</option>
+              <option>2–5</option>
+              <option>6–10</option>
+              <option>10+</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="software_spend">Monthly software spend, roughly</label>
+            <select id="software_spend" name="software_spend">
+              <option value="">Select…</option>
+              <option>Under $250</option>
+              <option>$250–$750</option>
+              <option>$750–$2,000</option>
+              <option>Over $2,000</option>
+              <option>Not sure</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="ams">Which AMS do you use today?</label>
+          <input id="ams" name="ams" />
+        </div>
+        <div class="field">
+          <label for="first_task">What would you want the AI agent to handle first?</label>
+          <textarea id="first_task" name="first_task" placeholder="The task you'd hand off tomorrow if you could."></textarea>
+        </div>
+
+        <button class="btn btn--primary" type="submit" style="width:100%">Join the waitlist →</button>
+      </form>
+    </div>
+  </section>
+
+  <section id="faq" class="section">
+    <div class="container split">
+      <p class="eyebrow side">Questions</p>
+      <div class="main faq">
+        {faqs.map(([q, a]) => (
+          <details>
+            <summary>{q}<span>+</span></summary>
+            <p>{a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<script is:inline>
+  // Send Web3Forms back to whichever host served the page (prod, dev proxy, localhost)
+  document.getElementById('redirect').value = `${location.origin}/thank-you/?type=waitlist`;
+</script>
+
+<style>
+  .hero { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 440px), 1fr)); gap: 32px 60px; align-items: start; }
+  .hero-title { max-width: 16ch; margin-bottom: 22px; text-wrap: pretty; }
+  .actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px; }
+  .shot { margin: 0; display: flex; flex-direction: column; gap: 10px; }
+  .shot-frame {
+    aspect-ratio: 4 / 3; background: var(--band); border: 1px solid var(--border); box-shadow: var(--shadow-lg);
+    display: flex; align-items: center; justify-content: center; padding: 24px; text-align: center;
+    color: var(--muted-2); font-size: 0.9rem;
+  }
+  .shot figcaption { font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-2); }
+
+  .top-rule { border-top: 2px solid var(--text); }
+  .top-rule-soft { border-top: 1px solid var(--border-soft); }
+  .split { display: flex; flex-wrap: wrap; gap: 22px 52px; align-items: start; }
+  .split .side { flex: 1 1 260px; max-width: 260px; margin: 0; }
+  .split .main { flex: 999 1 520px; min-width: 0; }
+  .stack { display: flex; flex-direction: column; gap: 28px; }
+  .display { max-width: 30ch; font-family: var(--font-serif); font-weight: 400; font-size: 2rem; line-height: 1.24; letter-spacing: 0; text-wrap: pretty; margin: 0; }
+  .compare-title, #compare .display { margin-bottom: 26px; }
+
+  .cells { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 0 36px; }
+  .cell { padding: 18px 0; border-top: 1px solid var(--border); }
+  .cell h3 { font-size: 1.05rem; line-height: 1.3; letter-spacing: -0.015em; margin: 0 0 6px; }
+  .cell p { margin: 0; line-height: 1.6; }
+
+  .video { display: flex; flex-direction: column; gap: 10px; padding-top: 8px; }
+  .video-box {
+    aspect-ratio: 16 / 9; max-width: 880px; background: var(--panel); border: 1px dashed var(--border); border-radius: var(--radius);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 24px; text-align: center;
+  }
+  .video-box .eyebrow { margin: 0; }
+  .play { width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--muted-2); padding-left: 3px; }
+  .small { font-size: 0.94rem; color: var(--muted-2); margin: 0; }
+
+  .tiers { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 22px; }
+  .tier { border-top: 3px solid var(--navy); display: flex; flex-direction: column; gap: 16px; box-shadow: var(--shadow-lg); }
+  .tier--accent { border-top-color: var(--brand); }
+  .tier p { margin: 0; font-size: 1.02rem; text-wrap: pretty; }
+  .tier-kicker { margin: 0 0 6px; }
+  .tier-title { font-size: 1.5rem; margin: 0; }
+  .points { list-style: none; margin: 0; padding: 12px 0 0; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 9px; }
+  .points li { display: grid; grid-template-columns: 24px 1fr; font-size: 0.9rem; line-height: 1.55; color: var(--muted); }
+  .points li span:first-child { color: var(--brand); }
+
+  .table-wrap { overflow-x: auto; padding: 6px 24px; }
+  .table { min-width: 520px; display: grid; grid-template-columns: 1fr 1.2fr 1.2fr; font-size: 0.94rem; line-height: 1.5; }
+  .th { padding: 14px 16px 12px 0; border-bottom: 2px solid var(--text); font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted-2); }
+  .th--accent { color: var(--brand); padding-right: 0; }
+  .td { padding: 14px 16px 14px 0; border-bottom: 1px solid var(--border-soft); font-family: var(--font-serif); color: var(--text); }
+  .td--label { font-family: var(--font); font-weight: 600; }
+  .td--ams { color: var(--muted-2); }
+  .td--us { padding-right: 0; }
+
+  .includes { padding: 72px 0; background: var(--navy); color: var(--on-navy-text); }
+  .includes h2 { margin: 0 0 26px; color: var(--on-navy-text); }
+  .includes .eyebrow { color: var(--on-navy-accent); }
+  .inc-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); border-top: 1px solid var(--on-navy-border); }
+  .inc { padding: 22px 24px 22px 0; border-bottom: 1px solid var(--on-navy-border); }
+  .inc h3 { font-size: 1.02rem; line-height: 1.3; margin: 0 0 8px; color: var(--on-navy-text); }
+  .inc p { margin: 0; font-size: 0.94rem; color: var(--on-navy-muted); text-wrap: pretty; }
+  .maint { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 28px; padding-top: 22px; font-size: 0.92rem; color: var(--on-navy-muted); }
+  .maint .eyebrow { margin: 0; }
+
+  .apply { display: flex; flex-wrap: wrap; gap: 28px 52px; align-items: start; }
+  .apply-copy { flex: 1 1 260px; max-width: 320px; }
+  .apply-copy p:not(.eyebrow) { font-size: 1.02rem; }
+  .apply-copy .display { margin-bottom: 16px; }
+  .apply-form { flex: 999 1 520px; max-width: 760px; }
+  .two { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 0 18px; }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+
+  .faq { max-width: 760px; border-top: 1px solid var(--text); }
+  .faq details { border-bottom: 1px solid var(--border-soft); }
+  .faq summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; gap: 16px; padding: 20px 0; font-size: 1.1rem; font-weight: 600; letter-spacing: -0.015em; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary span { color: var(--brand); font-weight: 400; }
+  .faq details[open] summary span { display: inline-block; transform: rotate(45deg); }
+  .faq details p { margin: 0; padding: 0 0 22px; max-width: 64ch; font-size: 1.02rem; line-height: 1.65; text-wrap: pretty; }
+</style>
