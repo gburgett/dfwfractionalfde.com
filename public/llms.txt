@@ -25,6 +25,7 @@ Prices are not published. Ask for a quote.
 - [Insights](https://dfwfractionalfde.com/insights/)
 - [Contact](https://dfwfractionalfde.com/contact/): request a fixed-price bid
 - [Start an engagement](https://dfwfractionalfde.com/waitlist/)
+- [For health insurance brokers](https://dfwfractionalfde.com/brokers/): a private AI back office for small health insurance brokerages, on a Mac the brokerage owns in its office. Fully on-device, or hybrid, where prompts leave the office.
 
 ### Fixed-price packages
 
