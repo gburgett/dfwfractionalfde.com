@@ -3,14 +3,8 @@ import Base from '../layouts/Base.astro';
 import PostCard from '../components/PostCard.astro';
 import { site } from '../data/site';
 import { getCaseStudyPosts } from '../lib/case-studies';
-import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import headshot from '../assets/headshot.jpg';
-
-// Fixed-price packages, ordered by their frontmatter `order` field.
-const packages = (await getCollection('packages'))
-  .sort((a, b) => a.data.order - b.data.order)
-  .map((entry) => ({ slug: entry.slug, ...entry.data }));
 
 // Keep the homepage rail to the 3 most recent case studies.
 const featured = (await getCaseStudyPosts()).slice(0, 3);
@@ -36,7 +30,6 @@ const full = site.openClients <= 0;
         </p>
         <div class="cta-row">
           <a class="btn btn--primary" href="/waitlist/">{full ? 'Join the waitlist →' : 'Start an engagement →'}</a>
-          <a class="btn btn--ghost" href="#fixed-price">Buy a fixed-price package →</a>
         </div>
       </div>
 
@@ -150,58 +143,6 @@ const full = site.openClients <= 0;
     </div>
   </section>
 
-  <!-- Fixed price -->
-  <section class="fixed" id="fixed-price">
-    <div class="container fixed-head">
-      <div class="fixed-head-copy">
-        <p class="eyebrow eyebrow--accent">Fixed price</p>
-        <h2 class="serif-head mt-0">Small, scoped, priced up front.</h2>
-        <p class="fixed-intro">
-          No retainer required. Good first steps if you'd rather see the work before you
-          see a subscription.
-        </p>
-      </div>
-      <span class="fixed-scroll-hint">Scroll for more →</span>
-    </div>
-    <div class="container">
-      <div class="fixed-rail">
-        {packages.map((pkg) => (
-          <article class="svc-card">
-            <div class="svc-media">
-              <Image src={pkg.image} alt={pkg.imageAlt} widths={[420, 840]} sizes="420px" format="webp" loading="lazy" />
-            </div>
-            <div class="svc-body">
-              <div class="svc-head">
-                <h3><a class="svc-title-link" href={`/packages/${pkg.slug}/`}>{pkg.name}</a></h3>
-                <div class="svc-price"><span class="amt">Get in touch</span><span class="term">{pkg.term}</span></div>
-              </div>
-              <p class="svc-blurb">
-                {pkg.blurb}
-                {pkg.caseStudySlug && (
-                  <>
-                    <br/>
-                    <br/>
-                    <a class="textlink" href={`/case-studies/${pkg.caseStudySlug}`}>{pkg.caseStudyLinkText}</a>
-                  </>
-                )}
-              </p>
-              <ul class="svc-list">
-                {pkg.features.map((feature) => <li>{feature}</li>)}
-              </ul>
-              <a class="textlink svc-cta" href={`${pkg.bookingUrl}${pkg.bookingUrl.includes('?') ? '&' : '?'}package=${pkg.slug}`}>Book this →</a>
-            </div>
-          </article>
-        ))}
-
-        <article class="svc-card svc-card--more">
-          <p class="eyebrow eyebrow--accent">Want to add AI to your product?</p>
-          <p>I build AI agents that make consumers' lives easier.</p>
-          <a class="textlink" href="/contact/?topic=project">Get in touch →</a>
-        </article>
-      </div>
-    </div>
-  </section>
-
   <!-- Insights / syndicated -->
   <section class="section">
     <div class="container">
@@ -286,55 +227,6 @@ const full = site.openClients <= 0;
     text-transform: uppercase; color: var(--muted-2);
   }
 
-  /* Fixed-price scroll rail */
-  .fixed { padding: 76px 0; background: var(--band); border-top: 1px solid var(--border-soft); }
-  .fixed-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 48px; }
-  .fixed-head-copy { max-width: 620px; display: flex; flex-direction: column; gap: 10px; }
-  .fixed-head-copy .serif-head { max-width: none; }
-  .fixed-intro { margin: 0; font-family: var(--font-serif); font-size: 1rem; color: var(--muted); }
-  .fixed-scroll-hint { flex: none; font-family: var(--font); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-2); }
-  .fixed-rail {
-    display: flex; gap: 26px; align-items: stretch;
-    margin-top: 28px; padding-bottom: 10px;
-    overflow-x: auto; scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-  }
-  .svc-card {
-    position: relative;
-    flex: 0 0 420px; scroll-snap-align: start;
-    display: flex; flex-direction: column;
-    background: var(--panel); border: 1px solid var(--border);
-    box-shadow: var(--shadow);
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
-  }
-  .svc-card:has(.svc-cta:hover) { border-color: var(--brand); }
-  .svc-media { height: 190px; background: var(--navy); overflow: hidden; }
-  .svc-media img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center top; }
-  .svc-body { padding: 26px; display: flex; flex-direction: column; gap: 14px; flex: 1; }
-  .svc-head { display: flex; flex-direction: column; gap: 8px; }
-  .svc-head h3 { margin: 0; font-size: 1.35rem; letter-spacing: -0.02em; }
-  .svc-price { display: flex; align-items: baseline; gap: 10px; }
-  .svc-price .amt { font-family: var(--mono); font-size: 1.5rem; font-weight: 500; color: var(--brand); }
-  .svc-price .term { font-family: var(--font); font-size: 0.7rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted-2); }
-  .svc-blurb { margin: 0; font-family: var(--font-serif); font-size: 0.98rem; line-height: 1.6; color: var(--muted); }
-  .svc-list { list-style: none; margin: 0; padding: 12px 0 0; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 9px; }
-  .svc-list li { position: relative; padding-left: 24px; font-size: 0.9rem; line-height: 1.55; color: var(--muted); }
-  .svc-list li::before { content: '→'; position: absolute; left: 0; color: var(--brand); }
-  .svc-cta { margin-top: auto; }
-  /* Stretch the "Book this" link to cover the whole card. */
-  .svc-cta::after {
-    content: ''; position: absolute; inset: 0; z-index: 0;
-  }
-  /* Keep genuinely separate links (e.g. the case-study link) clickable. */
-  .svc-blurb a { position: relative; z-index: 1; }
-  .svc-title-link { position: relative; z-index: 1; color: inherit; text-decoration: none; }
-  .svc-title-link:hover { text-decoration: underline; }
-  .svc-card--more {
-    flex-basis: 320px; justify-content: center; gap: 12px; padding: 34px;
-    background: transparent; border: 1px dashed var(--border); box-shadow: none;
-  }
-  .svc-card--more p { margin: 0; font-family: var(--font-serif); font-size: 1.02rem; line-height: 1.5; color: var(--muted-2); }
-  .svc-card--more .eyebrow { margin: 0; }
 
   .engineer { display: grid; grid-template-columns: 200px 1fr; gap: 40px; align-items: start; }
   .engineer-photo { width: 100%; max-width: 200px; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border: 1px solid var(--border); box-shadow: var(--shadow-lg); }
@@ -379,8 +271,5 @@ const full = site.openClients <= 0;
     .step { border-right: none; border-bottom: 1px solid var(--on-navy-border); }
     .step:last-child { border-bottom: none; }
     .row-head { flex-direction: column; align-items: flex-start; gap: 10px; }
-    .fixed-head { flex-direction: column; align-items: flex-start; gap: 14px; }
-    .svc-card { flex-basis: 82%; }
-    .svc-card--more { flex-basis: 70%; }
   }
 </style>
